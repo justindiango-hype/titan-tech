@@ -1,0 +1,2020 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Titan Technologies — Electronics, designed and built in Cebu since 1987</title>
+<meta name="description" content="Titan Technologies: IoT automation, direct digital controls, industrial electronics integration and technical software. Designed and built in Cebu since 1987.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style id="titan-base">
+  :root {
+    --black: #000000;
+    --blue: #1b56cb;        /* logo blue */
+    --blue-bright: #4d8dff;
+    --ice: #e6f4ff;         /* logo white */
+    --dim: rgba(230, 244, 255, 0.62);
+    --white-out: #f2f7ff;   /* the white both scenes pass through between chapters */
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: var(--black); }
+  body {
+    background: var(--black);
+    color: var(--ice);
+    font-family: "Sora", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  /* ---------- fixed header ---------- */
+  #nav {
+    position: fixed; inset: 0 0 auto 0; z-index: 20;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px clamp(16px, 4vw, 48px);
+    pointer-events: none;
+  }
+  #nav > * { pointer-events: auto; }
+  .brand { font-weight: 700; font-size: 15px; letter-spacing: 0.14em; text-shadow: 0 1px 14px rgba(0, 0, 0, 0.7); }
+  .brand span { font-weight: 300; opacity: 0.75; }
+  .talk {
+    font-size: 12px; padding: 10px 16px; border-radius: 999px;
+    border: 1px solid rgba(77, 141, 255, 0.55);
+    background: rgba(4, 14, 44, 0.62);     /* dark enough to read over the bright plant scene */
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    transition: background 0.25s, border-color 0.25s;
+  }
+  .talk:hover { background: rgba(27, 86, 203, 0.5); border-color: var(--blue-bright); }
+</style>
+
+<style id="titan-scroll-marker">
+  /* The scroll marker stays on screen through every chapter and bows out at the end of the page. */
+  #scroll-marker {
+    position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 15;
+    font-size: 11px; color: var(--dim); display: flex; flex-direction: column; align-items: center; gap: 8px;
+    pointer-events: none; transition: opacity 0.5s ease;
+  }
+  #scroll-marker.done { opacity: 0; }
+  #scroll-marker i { display: block; width: 1px; height: 26px; background: linear-gradient(var(--blue-bright), transparent); animation: marker 1.8s ease-in-out infinite; transform-origin: top; }
+  @keyframes marker { 0%, 100% { transform: scaleY(0.35); opacity: 0.4; } 50% { transform: scaleY(1); opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { #scroll-marker i { animation: none; } }
+</style>
+
+<style id="titan-intro">
+  /* The intro is a tall section; the stage inside it sticks to the screen
+     while the scroll position drives the camera. */
+  /* the last 60vh of the intro overlaps chapter 1, so both stages are pinned
+     during the handover and nothing ever slides across the screen */
+  #intro { position: relative; height: 375vh; z-index: 2; }
+  #stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+  #gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 1.2s ease; }
+  #gl.ready { opacity: 1; }
+
+  #hero-copy {
+    position: absolute; left: clamp(16px, 4vw, 48px); right: clamp(16px, 4vw, 48px);
+    bottom: clamp(72px, 11vh, 120px);
+    max-width: 640px;
+    will-change: opacity, transform;
+  }
+  #hero-copy h1 { font-size: clamp(34px, 6vw, 68px); font-weight: 600; line-height: 1.02; letter-spacing: -0.02em; }
+  #hero-copy p { margin-top: 16px; font-size: clamp(15px, 1.5vw, 19px); font-weight: 300; color: var(--dim); max-width: 30em; }
+
+  #flash, #fade { position: absolute; inset: 0; pointer-events: none; opacity: 0; }
+  #flash { background: radial-gradient(circle at 50% 50%, #ffffff 0%, #bcdcff 45%, #4d8dff 100%); }
+  #fade  { background: var(--white-out); }
+
+  #no-webgl { position: absolute; inset: 0; display: none; place-items: center; }
+  #no-webgl img { width: min(70vw, 520px); border-radius: 12px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    #intro { height: 100vh; height: 100svh; }
+  }
+</style>
+
+<style id="titan-ch1">
+  /* Chapter 1 is a tall section; its stage sticks while scroll walks the camera along the bench. */
+  #ch1 { position: relative; height: 490vh; margin-top: -160vh; z-index: 1; }
+  #ch1-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+  #gl1 { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 1.2s ease; }
+  #gl1.ready { opacity: 1; }
+  .ch-copy {
+    position: absolute; left: clamp(16px, 4vw, 48px); right: clamp(16px, 4vw, 48px);
+    bottom: clamp(56px, 10vh, 110px); max-width: 560px; opacity: 0; will-change: opacity;
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.8);
+  }
+  .ch-copy h2 { font-size: clamp(28px, 4.4vw, 52px); font-weight: 600; line-height: 1.06; letter-spacing: -0.02em; }
+  .ch-copy p { margin-top: 16px; font-size: clamp(16px, 1.6vw, 20px); font-weight: 300; color: var(--dim); max-width: 30em; line-height: 1.55; }
+  .ch-copy p.lead { margin-top: 0; font-size: clamp(20px, 2.4vw, 30px); color: var(--ice); line-height: 1.3; }
+  #ch1-veil { position: absolute; inset: 0; background: var(--white-out); pointer-events: none; opacity: 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    #ch1 { height: auto; margin-top: 0; }
+    #ch1-stage { position: relative; }
+    .ch-copy { opacity: 1; }
+    #ch1-a { bottom: auto; top: 96px; }
+    #ch1-veil { opacity: 0; }
+  }
+</style>
+
+<style id="titan-ch2">
+  #ch2 { position: relative; height: 490vh; margin-top: -160vh; z-index: 0; }
+  #ch2-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+  #gl2 { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 1.2s ease; }
+  #gl2.ready { opacity: 1; }
+  #ch2-veil { position: absolute; inset: 0; background: var(--white-out); pointer-events: none; opacity: 1; z-index: 3; }
+  /* the plant is bright white, so the text sits on a soft dark corner */
+  #ch2-stage::after {
+    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background:
+      linear-gradient(to top, rgba(0, 3, 12, 0.82) 0%, rgba(0, 3, 12, 0.45) 30%, transparent 58%),
+      linear-gradient(to right, rgba(0, 3, 12, 0.6) 0%, transparent 55%);
+  }
+  #ch2 .ch-copy { z-index: 2; }
+  .partner { display: flex; align-items: center; gap: 14px; margin-top: 26px; font-size: 14px; font-weight: 300; color: var(--dim); line-height: 1.45; }
+  .partner canvas { width: 72px; height: 72px; flex: none; border-radius: 50%; }
+  .partner strong { font-weight: 600; color: var(--ice); }
+
+  @media (prefers-reduced-motion: reduce) {
+    #ch2 { height: auto; margin-top: 0; }
+    #ch2-stage { position: relative; }
+    #ch2-a { bottom: auto; top: 96px; }
+    #ch2-veil { opacity: 0; }
+  }
+</style>
+
+<style id="titan-ch3">
+  /* Gallery: photos hang in space and drift past as you scroll. */
+  #ch3 { position: relative; height: 460vh; background: var(--black); margin-top: -160vh; z-index: -1; }
+  main { position: relative; z-index: 0; }
+  #ch3-stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; perspective: 1000px; background: radial-gradient(ellipse at 50% 45%, #06143a 0%, #000 70%); }
+  #g-world { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform; }
+  .g-card {
+    position: absolute; left: 50%; top: 50%; width: clamp(170px, 25vw, 360px); aspect-ratio: 4 / 3; margin: 0;
+    border: 1px solid rgba(77, 141, 255, 0.55); border-radius: 6px; overflow: hidden; opacity: 0;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6); background: #050b1c; will-change: transform, opacity;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .g-card img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(0.8) brightness(0.9); transition: filter 0.3s, transform 0.5s; }
+  .g-card:hover { border-color: #fff; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75); }
+  .g-card:hover img { filter: none; transform: scale(1.06); }
+  .g-title { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; pointer-events: none; padding: 0 16px; }
+  .g-title h2 { font-size: clamp(30px, 5.4vw, 68px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.05; text-shadow: 0 2px 30px #000, 0 0 60px #000; }
+  #ch3-veil { position: absolute; inset: 0; background: var(--white-out); pointer-events: none; opacity: 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    #ch3 { height: auto; margin-top: 0; }
+    #ch3-stage { position: relative; height: auto; padding: 96px 16px 48px; perspective: none; }
+    #g-world { position: static; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; transform: none !important; }
+    .g-card { position: static; width: auto; opacity: 1 !important; transform: none !important; }
+    .g-title { position: static; margin-bottom: 24px; }
+    #ch3-veil { display: none; }
+  }
+</style>
+
+<style id="titan-sections">
+  /* The closing sections are ordinary page sections: no 3D, just reveals and pointer effects. */
+  .sec { position: relative; background: var(--black); min-height: 100vh; min-height: 100svh; display: grid; align-items: center; padding: clamp(80px, 12vh, 140px) clamp(16px, 4vw, 48px); overflow: hidden; }
+  .sec-in { width: 100%; }
+  .sec p strong { font-weight: 700; color: var(--ice); }
+  /* headings are split into words so each can rise out of its own mask */
+  .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.12em; margin-bottom: -0.12em; }
+  .w > span { display: inline-block; will-change: transform; }
+  .sec-in { max-width: 1180px; margin: 0 auto; }
+  .sec h2 { font-size: clamp(28px, 4.4vw, 54px); font-weight: 600; line-height: 1.08; letter-spacing: -0.02em; }
+  .sec p { margin-top: 18px; font-size: clamp(16px, 1.6vw, 20px); font-weight: 300; color: var(--dim); max-width: 32em; line-height: 1.6; }
+
+  .person { display: grid; grid-template-columns: minmax(200px, 340px) 1fr; gap: clamp(28px, 6vw, 80px); align-items: center; }
+  .portrait { margin: 0; border-radius: 10px; overflow: hidden; transition: transform 0.25s ease-out; will-change: transform; }
+  .portrait img { display: block; width: 100%; height: auto; will-change: transform; }
+
+  .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 44px; }
+  .card {
+    position: relative; overflow: hidden; border-radius: 10px; min-height: 380px;
+    display: flex; align-items: flex-end; background: #050b1c;
+  }
+  .card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.7) brightness(0.55); transition: filter 0.4s; }
+  .card::after {      /* a soft light that follows the pointer */
+    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.3s;
+    background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.16), transparent 70%);
+  }
+  .card > div { position: relative; z-index: 1; padding: 20px; width: 100%; background: linear-gradient(to top, rgba(0, 3, 12, 0.92) 30%, transparent); }
+  .card h3 { font-size: 19px; font-weight: 600; line-height: 1.2; }
+  .card p { margin-top: 8px; font-size: 15px; color: rgba(230, 244, 255, 0.82); }
+  .card:hover img { filter: saturate(0.9) brightness(0.75); }
+  .card:hover::after { opacity: 1; }
+
+  .tinker { display: grid; grid-template-columns: 1fr 1.3fr; gap: clamp(28px, 6vw, 80px); align-items: center; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .shot { margin: 0; border-radius: 10px; overflow: hidden; aspect-ratio: 3 / 4; }
+  .shot img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(0.8) brightness(0.85); transition: filter 0.4s; }
+  .shot:hover img { filter: none; }
+
+  .contact h2 { font-size: clamp(32px, 6vw, 76px); max-width: 14em; }
+  .ways { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 16px; margin-top: 48px; font-size: clamp(17px, 1.8vw, 22px); }
+  .way { display: block; padding: 20px 26px; border-radius: 10px; background: #050b1c; }
+  .ways span { display: block; font-size: 13px; color: var(--blue-bright); margin-bottom: 6px; letter-spacing: 0.06em; }
+  footer { max-width: 1180px; margin: clamp(72px, 12vh, 140px) auto 0; padding-top: 22px; border-top: 1px solid rgba(230, 244, 255, 0.16); font-size: 13px; color: var(--dim); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 32px; }
+  .credit { display: inline-flex; align-items: center; gap: 14px; color: var(--ice); opacity: 0.85; transition: opacity 0.25s; }
+  .credit:hover { opacity: 1; }
+  .credit span { color: var(--dim); letter-spacing: 0.04em; }
+  .credit-logo { height: 26px; width: auto; display: block; }
+
+  @media (max-width: 900px) {
+    .cards { grid-template-columns: 1fr 1fr; }
+    .person, .tinker { grid-template-columns: 1fr; }
+    .portrait { max-width: 280px; }
+    .ways { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 520px) { .cards { grid-template-columns: 1fr; } .card { min-height: 300px; } }
+  @media (prefers-reduced-motion: reduce) {
+    .card img, .shot img, .portrait { transition: none; }
+    .lit::before { animation: none; }
+  }
+</style>
+
+<style id="titan-light-outline">
+  /* Light outline: a bright beam travels round the edge of every card. */
+  @property --beam { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+  .lit { position: relative; }
+  .lit::before {
+    content: ""; position: absolute; inset: 0; z-index: 3; padding: 1.5px; border-radius: inherit; pointer-events: none;
+    background: conic-gradient(from var(--beam), rgba(77, 141, 255, 0.28) 0deg, rgba(77, 141, 255, 0.28) 235deg, #6aa5ff 290deg, #ffffff 325deg, #6aa5ff 350deg, rgba(77, 141, 255, 0.28) 360deg);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    animation: beam 5.5s linear infinite;
+  }
+  .lit:nth-child(2)::before { animation-delay: -1.4s; }
+  .lit:nth-child(3)::before { animation-delay: -2.8s; }
+  .lit:nth-child(4)::before { animation-delay: -4.2s; }
+  .lit:hover::before { animation-duration: 2.2s; }
+  @keyframes beam { to { --beam: 360deg; } }
+</style>
+
+<style id="titan-closing-fx">
+  /* Behind the closing sections: a breathing field of 1s and 0s, and a small
+     spinning logo. Both live in one layer that stays pinned to the screen. */
+  #closing { position: relative; background: var(--black); }
+  #closing-fx { position: sticky; top: 0; height: 100vh; height: 100svh; margin-bottom: -100vh; margin-bottom: -100svh; z-index: 0; pointer-events: none; overflow: hidden; }
+  #closing-fx canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #closing .sec { background: transparent; z-index: 1; }
+  .person p { max-width: 24em; }      /* leaves the right side free for the logo */
+</style>
+
+<style id="titan-chapter">
+  .chapter {
+    position: relative; background: var(--black);
+    min-height: 100vh; display: grid; align-content: center;
+    padding: 120px clamp(16px, 4vw, 48px);
+    max-width: 900px;
+  }
+  .chapter h2 { font-size: clamp(28px, 4.6vw, 54px); font-weight: 600; line-height: 1.08; letter-spacing: -0.02em; }
+  .chapter p { margin-top: 20px; font-size: clamp(16px, 1.6vw, 20px); font-weight: 300; color: var(--dim); max-width: 34em; line-height: 1.6; }
+  .chapter .wip { margin-top: 44px; font-size: 11px; color: var(--dim); }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+
+<body>
+<header id="nav">
+  <a class="brand" href="#intro">TITAN <span>TECHNOLOGIES</span></a>
+  <a class="talk mono" href="#contact">Talk to us</a>
+</header>
+
+<div id="scroll-marker" class="mono" aria-hidden="true"><span>Scroll</span><i></i></div>
+
+<main>
+  <section id="intro" aria-label="Introduction">
+    <div id="stage">
+      <canvas id="gl" aria-hidden="true"></canvas>
+      <div id="no-webgl"><img src="logo.jpg" alt="Titan Technologies logo"></div>
+
+      <div id="hero-copy">
+        <h1>Titan Technologies</h1>
+        <p>Electronics, designed and built in Cebu since 1987.</p>
+      </div>
+
+      <div id="flash"></div>
+      <div id="fade"></div>
+    </div>
+  </section>
+
+  <section id="ch1" aria-label="From the workbench">
+    <div id="ch1-stage">
+      <canvas id="gl1" aria-hidden="true"></canvas>
+      <div class="ch-copy" id="ch1-a">
+        <h2>From the workbench</h2>
+        <p>It started in 1987 with a workbench and a soldering iron.</p>
+      </div>
+      <div class="ch-copy" id="ch1-b">
+        <p class="lead">Then came the taxi meter: one small box, trusted to get the fare right on every trip.</p>
+      </div>
+      <div id="ch1-veil"></div>
+    </div>
+  </section>
+
+  <section id="ch2" aria-label="Today: saving lives">
+    <div id="ch2-stage">
+      <canvas id="gl2" aria-hidden="true"></canvas>
+      <div class="ch-copy" id="ch2-a">
+        <h2>Today: saving lives</h2>
+        <p>Today our systems run oxygen plants for hospitals.</p>
+      </div>
+      <div class="ch-copy" id="ch2-b">
+        <p class="lead">They watch pressure, purity and flow around the clock.</p>
+        <div class="partner">
+          <canvas id="bmc-badge" width="144" height="144" role="img" aria-label="Brilliant Metal Craft Hospital Systems logo"></canvas>
+          <span>In partnership with<br><strong>Brilliant Metal Craft Hospital Systems</strong></span>
+        </div>
+      </div>
+      <div id="ch2-veil"></div>
+    </div>
+  </section>
+
+  <section id="ch3" aria-label="A look at the work">
+    <div id="ch3-stage">
+      <div id="g-world"></div>
+      <div class="g-title"><h2>A look at the work</h2></div>
+      <div id="ch3-veil"></div>
+    </div>
+  </section>
+
+  <div id="closing">
+  <div id="closing-fx" aria-hidden="true"><canvas id="bits"></canvas><canvas id="mini-t"></canvas></div>
+
+  <section class="sec" id="person">
+    <div class="sec-in person">
+      <figure class="portrait lit" id="portrait"><img src="assets/father.jpg" alt="Jerome Sy Diango" width="811" height="812"></figure>
+      <div class="txt">
+        <h2>The person behind it</h2>
+        <p>Everything Titan makes is designed and built by <strong>Jerome Sy Diango</strong> and the team he trained.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="services">
+    <div class="sec-in">
+      <h2>What we do</h2>
+      <div class="cards">
+        <article class="card lit"><img src="assets/619332341_26139542328983108_8219058674993159822_n.jpg" alt="" loading="lazy"><div><h3>IoT Automation</h3><p>Machines and sensors connected, so you can see and control them from anywhere.</p></div></article>
+        <article class="card lit"><img src="assets/481258561_1102367488571155_5381285075877700140_n.jpg" alt="" loading="lazy"><div><h3>Direct Digital Controls</h3><p>Controllers that keep equipment running to the settings you choose.</p></div></article>
+        <article class="card lit"><img src="assets/476839911_8715908931848532_25683167773787782_n.jpg" alt="" loading="lazy"><div><h3>Industrial Electronics Integration</h3><p>Panels, drives and boards wired into one working system.</p></div></article>
+        <article class="card lit"><img src="assets/769056320_28292310977039555_8507636834184854316_n.jpg" alt="" loading="lazy"><div><h3>Technical Software Solutions</h3><p>Software written for the machine in front of us.</p></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="tinkering">
+    <div class="sec-in tinker">
+      <div class="txt">
+        <h2>Still tinkering</h2>
+        <p>The workbench is still busy. The latest side project is an electric vehicle.</p>
+      </div>
+      <div class="pair">
+        <figure class="shot lit"><img src="assets/29497594_1387242551381910_1851698192446390272_n.jpg" alt="An electric vehicle chassis being built" loading="lazy"></figure>
+        <figure class="shot lit"><img src="assets/29425369_1387242324715266_3445499292578480128_n.jpg" alt="The electric motor and chain drive" loading="lazy"></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="contact">
+    <div class="sec-in contact">
+      <h2>Tell us what you need to measure or control.</h2>
+      <div class="ways">
+        <a class="way lit" href="tel:+639156021879"><span>Call</span>+63 915 602 1879</a>
+        <a class="way lit" href="mailto:jsdiango@gmail.com"><span>Email</span>jsdiango@gmail.com</a>
+        <div class="way lit"><span>Visit</span>Mabolo, Cebu City, Philippines</div>
+      </div>
+    </div>
+    <footer>
+      <span>Titan Technologies · Cebu · Since 1987</span>
+      <!-- Website credit. To change where it points (e.g. after buying a domain), edit this one href. -->
+      <a class="credit" href="https://justindiango-hype.github.io/justindiango/" target="_blank" rel="noopener">
+        <span>Website Architect</span>
+        <svg viewBox="-4 -86 769 118" class="credit-logo" role="img" aria-label="Justin Diango"><g data-logo-bolt="true" transform="translate(0 -78) scale(0.88)"><path d="M30 0 L0 52 H24 L14 96 L58 38 H34 L52 0 Z" fill="#0F7FC4" transform="translate(6 4)"></path><path d="M30 0 L0 52 H24 L14 96 L58 38 H34 L52 0 Z" fill="#DEF434"></path></g><path d="M22.282852807283763 1.3827769347496208Q14.641426403641882 1.3827769347496208 8.382776934749621 -1.2517071320182094Q2.1241274658573595 -3.88619119878604 -1.9965857359635812 -8.92412746585736L8.810470409711684 -21.720864946889225Q11.641502276176025 -18.13467374810319 14.605273141122915 -16.29157814871017Q17.569044006069802 -14.448482549317148 20.903490136570564 -14.448482549317148Q29.68270106221548 -14.448482549317148 29.68270106221548 -24.638012139605465V-54.65151745068286H5.47928679817906V-70.0H49.28990895295903V-25.789757207890744Q49.28990895295903 -12.103490136570564 42.38641881638847 -5.360356600910471Q35.48292867981791 1.3827769347496208 22.282852807283763 1.3827769347496208ZM82.5861153262519 0.8758725341426404Q75.96198786039454 0.8758725341426404 70.72750379362671 -1.7275796661608496Q65.49301972685888 -4.33103186646434 62.52405159332322 -9.84138846737481Q59.55508345978756 -15.35174506828528 59.55508345978756 -23.941426403641884V-54.2345220030349H78.55538694992413V-27.034597875569048Q78.55538694992413 -20.738088012139606 80.95189681335357 -18.00364188163885Q83.34840667678301 -15.269195751138088 87.61039453717754 -15.269195751138088Q90.44825493171473 -15.269195751138088 92.74131259484068 -16.58296661608498Q95.03437025796663 -17.89673748103187 96.39814112291351 -20.750151745068287Q97.7619119878604 -23.603566009104703 97.7619119878604 -28.069044006069806V-54.2345220030349H116.76221547799696V0.0H98.67572078907436V-15.303490136570563L102.19992412746586 -10.972458270106223Q99.36198786039455 -5.006904400606981 94.07405159332322 -2.06551593323217Q88.7861153262519 0.8758725341426404 82.5861153262519 0.8758725341426404ZM146.71039453717754 0.8758725341426404Q139.80349013657056 0.8758725341426404 133.23622913505312 -0.7017071320182093Q126.66896813353567 -2.279286798179059 122.68619119878605 -4.710318664643399L128.3896813353566 -17.686342943854324Q132.16555386949926 -15.386342943854325 137.26900606980274 -14.024279210925645Q142.37245827010622 -12.662215477996966 147.30349013657056 -12.662215477996966Q152.0551593323217 -12.662215477996966 153.92408952959028 -13.672534142640366Q155.7930197268589 -14.682852807283764 155.7930197268589 -16.44142640364188Q155.7930197268589 -17.98277693474962 154.06198786039454 -18.75Q152.33095599393022 -19.51722306525038 149.4844081942337 -19.92583459787557Q146.6378603945372 -20.334446130500762 143.2257966616085 -20.79996206373293Q139.81373292867983 -21.2654779969651 136.36718512898332 -22.14996206373293Q132.92063732928682 -23.03444613050076 130.0740895295903 -24.77238239757208Q127.22754172989379 -26.5103186646434 125.49650986342945 -29.48273899848255Q123.7654779969651 -32.4551593323217 123.7654779969651 -37.12412746585736Q123.7654779969651 -42.26206373292868 126.82238239757208 -46.30690440060698Q129.87928679817907 -50.35174506828528 135.77242033383916 -52.73106980273141Q141.66555386949926 -55.11039453717755 150.15182094081945 -55.11039453717755Q155.93459787556907 -55.11039453717755 161.7639226100152 -53.963846737481035Q167.5932473444613 -52.81729893778452 171.6449924127466 -50.54833080424886L165.94150227617604 -37.57230652503794Q161.89666160849774 -39.87230652503794 157.90872534142642 -40.722306525037936Q153.9207890743551 -41.57230652503794 150.32769347496208 -41.57230652503794Q145.53118361153264 -41.57230652503794 143.54673748103187 -40.461987860394544Q141.56229135053113 -39.35166919575114 141.56229135053113 -37.76206373292868Q141.56229135053113 -36.15864946889226 143.29332321699547 -35.34142640364188Q145.0243550834598 -34.52420333839151 147.8709028831563 -34.084559939301975Q150.7174506828528 -33.64491654021244 154.1295144157815 -33.17940060698027Q157.5415781487102 -32.713884673748105 160.95364188163887 -31.794916540212444Q164.36570561456753 -30.875948406676784 167.21225341426404 -29.15352807283763Q170.05880121396055 -27.43110773899848 171.7898330804249 -24.474203338391504Q173.52086494688925 -21.517298937784524 173.52086494688925 -16.879362670713203Q173.52086494688925 -11.948330804248862 170.48292867981792 -7.900037936267071Q167.4449924127466 -3.851745068285281 161.47082701062214 -1.4879362670713203Q155.49666160849773 0.8758725341426404 146.71039453717754 0.8758725341426404ZM203.8828528072838 0.8758725341426404Q193.48277693474964 0.8758725341426404 187.7103186646434 -4.248292867981791Q181.9378603945372 -9.372458270106222 181.9378603945372 -19.803566009104703V-66.34833080424886H200.93816388467377V-20.034597875569048Q200.93816388467377 -17.06911987860395 202.50538694992414 -15.420864946889228Q204.07261001517452 -13.772610015174507 206.63118361153266 -13.772610015174507Q209.9656297420334 -13.772610015174507 212.3828528072838 -15.520864946889226L217.13118361153266 -2.2413505311077393Q214.65531107739002 -0.6482549317147193 211.1604704097117 0.11380880121396059Q207.66562974203342 0.8758725341426404 203.8828528072838 0.8758725341426404ZM174.00341426403645 -40.0619119878604V-54.2345220030349H213.25531107739002V-40.0619119878604ZM222.44817905918057 0.0V-54.2345220030349H241.44848254931716V0.0ZM231.94833080424888 -60.21714719271625Q226.7103186646434 -60.21714719271625 223.522344461305 -63.11373292867982Q220.33437025796664 -66.0103186646434 220.33437025796664 -70.2896813353566Q220.33437025796664 -74.5690440060698 223.522344461305 -77.46562974203339Q226.7103186646434 -80.36221547799697 231.94833080424888 -80.36221547799697Q237.18634294385436 -80.36221547799697 240.37431714719276 -77.63459787556904Q243.56229135053113 -74.90698027314112 243.56229135053113 -70.62761760242793Q243.56229135053113 -66.1103186646434 240.38983308042492 -63.16373292867982Q237.2173748103187 -60.21714719271625 231.94833080424888 -60.21714719271625ZM251.7481790591806 0.0V-54.2345220030349H269.8346737481032V-38.79309559939302L266.3104704097117 -43.33103186646434Q269.35531107739 -49.158649468892264 274.77427921092567 -52.1345220030349Q280.1932473444613 -55.11039453717755 286.98634294385437 -55.11039453717755Q293.34840667678304 -55.11039453717755 298.41737481031873 -52.57591047040971Q303.48634294385437 -50.04142640364188 306.4208270106222 -44.71900606980273Q309.35531107739 -39.39658573596358 309.35531107739 -30.982776934749623V0.0H290.35500758725345V-27.88960546282246Q290.35500758725345 -33.70333839150228 288.0119499241275 -36.33433232169955Q285.66889226100153 -38.96532625189681 281.513808801214 -38.96532625189681Q278.46904400606985 -38.96532625189681 276.0070182094082 -37.65155538694992Q273.54499241274664 -36.337784522003034 272.1467374810319 -33.534370257966614Q270.74848254931715 -30.730955993930195 270.74848254931715 -26.165477996965098V0.0Z" fill="currentColor" transform="translate(72 0)"></path><path d="M324.23437025796665 0.0V-70.0H357.33793626707137Q368.91380880121403 -70.0 377.70519726858885 -65.70345220030349Q386.49658573596366 -61.40690440060698 391.434522003035 -53.59138846737481Q396.3724582701063 -45.77587253414264 396.3724582701063 -35.0Q396.3724582701063 -24.29309559939302 391.434522003035 -16.44309559939302Q386.49658573596366 -8.59309559939302 377.70519726858885 -4.29654779969651Q368.91380880121403 0.0 357.33793626707137 0.0ZM344.0484825493172 -15.76229135053111H356.46206373292875Q362.48611532625193 -15.76229135053111 366.9498482549318 -18.050189681335358Q371.4135811836116 -20.338088012139607 373.9014795144159 -24.677693474962066Q376.3893778452201 -29.017298937784524 376.3893778452201 -35.0Q376.3893778452201 -41.08270106221548 373.9014795144159 -45.37230652503794Q371.4135811836116 -49.6619119878604 366.9498482549318 -51.949810318664646Q362.48611532625193 -54.23770864946889 356.46206373292875 -54.23770864946889H344.0484825493172ZM403.94817905918063 0.0V-54.2345220030349H422.9484825493172V0.0ZM413.44833080424894 -60.21714719271625Q408.21031866464347 -60.21714719271625 405.02234446130507 -63.11373292867982Q401.83437025796667 -66.0103186646434 401.83437025796667 -70.2896813353566Q401.83437025796667 -74.5690440060698 405.02234446130507 -77.46562974203339Q408.21031866464347 -80.36221547799697 413.44833080424894 -80.36221547799697Q418.6863429438544 -80.36221547799697 421.8743171471928 -77.63459787556904Q425.0622913505312 -74.90698027314112 425.0622913505312 -70.62761760242793Q425.0622913505312 -66.1103186646434 421.889833080425 -63.16373292867982Q418.71737481031874 -60.21714719271625 413.44833080424894 -60.21714719271625ZM466.25508345978767 0.0V-10.10341426403642L464.99643399089535 -12.57928679817906V-31.165477996965098Q464.99643399089535 -35.69301972685888 462.23611532625193 -38.134370257966616Q459.47579666160857 -40.57572078907435 453.5413505311078 -40.57572078907435Q449.5620637329288 -40.57572078907435 445.5758725341427 -39.33262518968134Q441.58968133535666 -38.089529590288315 438.76555386949934 -35.93437025796662L432.4034142640365 -48.75523520485584Q437.01722306525045 -51.84833080424886 443.45345220030356 -53.4793626707132Q449.88968133535667 -55.11039453717755 456.2896813353567 -55.11039453717755Q469.4897572078908 -55.11039453717755 476.7432473444614 -49.074165402124436Q483.99673748103197 -43.03793626707132 483.99673748103197 -30.082701062215477V0.0ZM450.3206373292869 0.8758725341426404Q443.83786039453724 0.8758725341426404 439.33786039453724 -1.3310318664643397Q434.83786039453724 -3.53793626707132 432.49131259484074 -7.31035660091047Q430.1447647951442 -11.08277693474962 430.1447647951442 -15.751745068285281Q430.1447647951442 -20.772458270106224 432.6585735963582 -24.425910470409715Q435.17238239757216 -28.079362670713206 440.4896433990896 -30.05694233687405Q445.80690440060704 -32.0345220030349 454.1517450682854 -32.0345220030349H467.01024279210935V-22.0654779969651H456.78975720789083Q452.19673748103196 -22.0654779969651 450.34503034901377 -20.589643399089532Q448.4933232169955 -19.11380880121396 448.4933232169955 -16.56555386949924Q448.4933232169955 -14.138012139605463 450.3932852807285 -12.624241274658575Q452.2932473444614 -11.110470409711686 455.6000758725342 -11.110470409711686Q458.7379362670714 -11.110470409711686 461.29305766312604 -12.655273141122915Q463.84817905918067 -14.200075872534143 464.99643399089535 -17.39658573596358L467.6171471927163 -10.417298937784523Q466.1309559939303 -4.813808801213961 461.7757966616086 -1.9689681335356601Q457.4206373292869 0.8758725341426404 450.3206373292869 0.8758725341426404ZM494.04817905918065 0.0V-54.2345220030349H512.1346737481033V-38.79309559939302L508.61047040971175 -43.33103186646434Q511.6553110773901 -49.158649468892264 517.0742792109257 -52.1345220030349Q522.4932473444615 -55.11039453717755 529.2863429438544 -55.11039453717755Q535.6484066767831 -55.11039453717755 540.7173748103187 -52.57591047040971Q545.7863429438544 -50.04142640364188 548.7208270106222 -44.71900606980273Q551.65531107739 -39.39658573596358 551.65531107739 -30.982776934749623V0.0H532.6550075872535V-27.88960546282246Q532.6550075872535 -33.70333839150228 530.3119499241276 -36.33433232169955Q527.9688922610017 -38.96532625189681 523.813808801214 -38.96532625189681Q520.7690440060699 -38.96532625189681 518.3070182094083 -37.65155538694992Q515.8449924127467 -36.337784522003034 514.446737481032 -33.534370257966614Q513.0484825493172 -30.730955993930195 513.0484825493172 -26.165477996965098V0.0ZM588.1448406676784 20.275872534142643Q580.2930955993932 20.275872534142643 573.2241274658575 18.49829286798179Q566.1551593323218 16.72071320182094 561.2413505311079 13.19658573596358L568.127617602428 -0.06221547799696623Q571.4517450682854 2.592943854324736 576.5413884673749 4.151555386949925Q581.6310318664645 5.710166919575113 586.4344461305009 5.710166919575113Q594.086115326252 5.710166919575113 597.4740136570563 2.372268588770864Q600.8619119878605 -0.9656297420333844 600.8619119878605 -7.396585735963581V-13.765402124430956L601.8619119878605 -28.996585735963585L601.7757207890745 -44.258801213960545V-54.2345220030349H619.8622154779971V-9.906980273141123Q619.8622154779971 5.496509863429439 611.5587253414265 12.88619119878604Q603.2552352048559 20.275872534142643 588.1448406676784 20.275872534142643ZM584.7688922610016 -2.782776934749621Q577.5896054628225 -2.782776934749621 571.5430576631261 -6.03277693474962Q565.4965098634295 -9.28277693474962 561.843057663126 -15.151745068285281Q558.1896054628226 -21.020713201820943 558.1896054628226 -28.996585735963585Q558.1896054628226 -36.97245827010622 561.843057663126 -42.84142640364188Q565.4965098634295 -48.71039453717754 571.5430576631261 -51.910394537177545Q577.5896054628225 -55.11039453717755 584.7688922610016 -55.11039453717755Q591.7447647951443 -55.11039453717755 596.6050834597877 -52.34142640364189Q601.4654021244311 -49.572458270106225 604.0377845220032 -43.76900606980273Q606.6101669195752 -37.96555386949924 606.6101669195752 -28.996585735963585Q606.6101669195752 -20.027617602427924 604.0377845220032 -14.224165402124433Q601.4654021244311 -8.420713201820941 596.6050834597877 -5.601745068285281Q591.7447647951443 -2.782776934749621 584.7688922610016 -2.782776934749621ZM589.2793626707133 -17.90022761760243Q592.7241274658575 -17.90022761760243 595.3827010622156 -19.295030349013658Q598.0412746585737 -20.68983308042489 599.551593323217 -23.201858877086494Q601.0619119878605 -25.7138846737481 601.0619119878605 -28.996585735963585Q601.0619119878605 -32.34825493171472 599.551593323217 -34.8257966616085Q598.0412746585737 -37.30333839150228 595.3827010622156 -38.64814112291351Q592.7241274658575 -39.992943854324736 589.2793626707133 -39.992943854324736Q585.9345978755691 -39.992943854324736 583.2260242792111 -38.64814112291351Q580.5174506828529 -37.30333839150228 578.9726479514417 -34.8257966616085Q577.4278452200305 -32.34825493171472 577.4278452200305 -28.996585735963585Q577.4278452200305 -25.7138846737481 578.9726479514417 -23.201858877086494Q580.5174506828529 -20.68983308042489 583.2260242792111 -19.295030349013658Q585.9345978755691 -17.90022761760243 589.2793626707133 -17.90022761760243ZM657.3103945371777 0.8758725341426404Q648.3963638600666 0.8758725341426404 641.503341262355 -2.7275796661608496Q634.6103186646435 -6.33103186646434 630.649962063733 -12.659270675265555Q626.6896054628226 -18.98750948406677 626.6896054628226 -27.156993104525572Q626.6896054628226 -35.35864946889226 630.6557697035462 -41.66690308108465Q634.6219339442698 -47.975156693277036 641.5023554395098 -51.54277561522729Q648.3827769347497 -55.11039453717755 657.3103945371777 -55.11039453717755Q666.2380121396055 -55.11039453717755 673.1701672586703 -51.54478742181978Q680.1023223777352 -47.979180306462005 684.016752994634 -41.67443984906544Q687.9311836115328 -35.36969939166888 687.9311836115328 -27.156625450844956Q687.9311836115328 -18.975872534142642 684.0208270106223 -12.65345220030349Q680.1104704097118 -6.33103186646434 673.1667335650302 -2.7275796661608496Q666.2229967203486 0.8758725341426404 657.3103945371777 0.8758725341426404ZM657.3103945371777 -14.241578148710168Q660.5551593323219 -14.241578148710168 663.11373292868 -15.736380880121397Q665.672306525038 -17.231183611532625 667.1826251896814 -20.162177541729896Q668.6929438543249 -23.093171471927164 668.6929438543249 -27.155651177350723Q668.6929438543249 -31.3103186646434 667.1826251896814 -34.15682852807284Q665.672306525038 -37.00333839150228 663.11373292868 -38.49814112291351Q660.5551593323219 -39.992943854324736 657.3259104704098 -39.992943854324736Q654.0966616084978 -39.992943854324736 651.5380880121397 -38.49814112291351Q648.9795144157816 -37.00333839150228 647.453679817906 -34.15682852807284Q645.9278452200305 -31.3103186646434 645.9278452200305 -27.155651177350723Q645.9278452200305 -23.093171471927164 647.453679817906 -20.162177541729896Q648.9795144157816 -17.231183611532625 651.5358975274481 -15.736380880121397Q654.0922806391146 -14.241578148710168 657.3103945371777 -14.241578148710168Z" fill="#DEF434" transform="translate(72 0)"></path></svg>
+      </a>
+    </footer>
+  </section>
+  </div>
+</main>
+
+<script type="module" id="titan-intro-js">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
+
+const $ = (s) => document.querySelector(s);
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const A = 'assets/3d/';   // lighting file, sky photo, metal and rock textures (all CC0)
+
+const canvas = $('#gl');
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, stencil: true, powerPreference: 'high-performance' });
+} catch (e) {
+  $('#no-webgl').style.display = 'grid';
+  canvas.style.display = 'none';
+  throw e;
+}
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));   // sharp enough, far fewer pixels than 2x
+renderer.setClearColor(0x000000);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x000000, 9, 24);
+const BASE_FOV = 46;
+const camera = new THREE.PerspectiveCamera(BASE_FOV, 1, 0.02, 200);
+
+/* ---------- loading: fade the canvas in once every file has arrived ---------- */
+const manager = new THREE.LoadingManager();
+const textures = [];
+manager.onLoad = () => {
+  // compile every shader and upload every texture now, so nothing stutters mid-scroll
+  const tv = tunnel.visible, wv = world.visible;
+  tunnel.visible = world.visible = true;
+  renderer.compile(scene, camera);
+  textures.forEach((t) => renderer.initTexture(t));
+  tunnel.visible = tv; world.visible = wv;
+  canvas.classList.add('ready'); needsRender = true;
+};
+const texLoader = new THREE.TextureLoader(manager);
+const maxAniso = renderer.capabilities.getMaxAnisotropy();
+function tex(file, srgb, rx = 1, ry = rx) {
+  const t = texLoader.load(A + file, () => { needsRender = true; });
+  textures.push(t);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.repeat.set(rx, ry);
+  t.anisotropy = maxAniso;
+  if (srgb) t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+// studio softbox lighting: this is what makes the metal look like metal
+new RGBELoader(manager).load(A + 'studio.hdr', (hdr) => {
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromEquirectangular(hdr).texture;
+  hdr.dispose(); pmrem.dispose();
+});
+
+/* ------------------------------------------------------------------
+   The mark, traced from logo.jpg (1 unit = 100 px of the 2048 px logo,
+   origin at the centre of the mark). Three solid blocks; the "T" is the
+   empty channel between them.
+------------------------------------------------------------------- */
+const BLOCKS = [
+  // top bar (its underside is the shallow V)
+  [[-1.355, 1.635], [1.355, 1.635], [1.355, 1.065], [0.285, 0.815], [0.285, 0.945], [-1.355, 1.215]],
+  // left column
+  [[-1.355, 0.79], [-0.195, 0.615], [-0.195, -1.635], [-1.355, -1.635]],
+  // right column
+  [[0.285, 0.435], [1.355, 0.659], [1.355, -1.635], [0.285, -1.635]],
+];
+const GAP_L = -0.195, GAP_R = 0.285;          // the stem of the T
+const GAP_X = (GAP_L + GAP_R) / 2;
+const BEVEL = 0.035;                          // rounded front and back edges
+const MARK_DEPTH = 0.9;                       // thickness of the mark
+const DEPTH = 26;                             // length of the hidden tunnel behind the channel
+
+const mark = new THREE.Group();
+scene.add(mark);
+
+/* ---------- circuit paths on the front face ---------- */
+function inside(poly, x, y) {
+  let c = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [xi, yi] = poly[i], [xj, yj] = poly[j];
+    if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) c = !c;
+  }
+  return c;
+}
+function makeTraces(poly, want, seed) {
+  let sd = seed;
+  const r = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+  const G = 0.0625, M = 0.09;
+  const ok = (x, y) => inside(poly, x, y) && inside(poly, x + M, y) && inside(poly, x - M, y) && inside(poly, x, y + M) && inside(poly, x, y - M);
+  const xs = poly.map((q) => q[0]), ys = poly.map((q) => q[1]);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  const paths = [];
+  let tries = 0;
+  while (paths.length < want && tries++ < 4000) {
+    let x = Math.round((x0 + r() * (x1 - x0)) / G) * G, y = Math.round((y0 + r() * (y1 - y0)) / G) * G;
+    if (!ok(x, y)) continue;
+    const pts = [[x, y]];
+    let horizontal = r() < 0.5;
+    const legs = 3 + Math.floor(r() * 4);
+    for (let k = 0; k < legs; k++) {
+      const len = (2 + Math.floor(r() * 8)) * G;
+      let placed = false;
+      for (const dir of r() < 0.5 ? [1, -1] : [-1, 1]) {
+        const nx = horizontal ? x + len * dir : x, ny = horizontal ? y : y + len * dir;
+        if (ok(nx, ny) && ok((x + nx) / 2, (y + ny) / 2)) { x = nx; y = ny; pts.push([x, y]); placed = true; break; }
+      }
+      if (!placed) break;
+      horizontal = !horizontal;
+    }
+    if (pts.length >= 3) paths.push(pts);
+  }
+  return paths;
+}
+
+/* ---------- materials ---------- */
+// brushed steel, photo-scanned (ambientCG Metal012)
+const steel = new THREE.MeshStandardMaterial({
+  color: 0xc3ccdb,
+  map: tex('metal_color.jpg', true, 0.55),
+  normalMap: tex('metal_normal.jpg', false, 0.55),
+  roughnessMap: tex('metal_rough.jpg', false, 0.55),
+  normalScale: new THREE.Vector2(0.7, 0.7),
+  metalness: 0.92, roughness: 0.95, envMapIntensity: 0.7,
+});
+const edgeMat = new THREE.LineBasicMaterial({ color: new THREE.Color(0.12, 0.3, 0.95), transparent: true });
+// etched circuit lines: fine dark grooves in the steel
+const etchMat = new THREE.MeshBasicMaterial({ color: 0x0a1c44, transparent: true, opacity: 0.55, depthWrite: false });
+// electricity: slow pulses that crawl along those lines
+const pulseMat = new THREE.ShaderMaterial({
+  transparent: true, depthWrite: false,
+  uniforms: { uTime: { value: 0 } },
+  vertexShader: `
+    attribute float aDist; attribute vec3 aMeta;   // aMeta = path length, phase, speed
+    varying float vDist; varying vec3 vMeta;
+    void main() { vDist = aDist; vMeta = aMeta; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+  fragmentShader: `
+    uniform float uTime; varying float vDist; varying vec3 vMeta;
+    void main() {
+      float cycle = vMeta.x + 1.6;                       // path length plus a rest
+      float head = fract(uTime * vMeta.z / cycle + vMeta.y) * cycle;
+      float d = head - vDist;
+      float tail = 0.7;
+      float i = (d > 0.0 && d < tail) ? pow(1.0 - d / tail, 2.0) : 0.0;
+      float spark = smoothstep(0.04, 0.0, abs(d));
+      float a = clamp(i * 0.9 + spark, 0.0, 1.0);
+      if (a < 0.01) discard;
+      vec3 c = mix(vec3(0.06, 0.4, 3.4), vec3(1.8, 2.6, 4.2), spark);
+      gl_FragColor = vec4(c, a);
+    }`,
+});
+
+function traceGeometry(paths, halfWidth, z, seed) {
+  const pos = [], dist = [], meta = [], idx = [];
+  let sd = seed;
+  const r = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+  for (const pts of paths) {
+    let total = 0;
+    for (let i = 1; i < pts.length; i++) total += Math.abs(pts[i][0] - pts[i - 1][0]) + Math.abs(pts[i][1] - pts[i - 1][1]);
+    const phase = r(), speed = 0.16 + r() * 0.18;       // units per second: slow
+    let run = 0;
+    for (let i = 1; i < pts.length; i++) {
+      const [ax, ay] = pts[i - 1], [bx, by] = pts[i];
+      const len = Math.abs(bx - ax) + Math.abs(by - ay);
+      const horiz = ay === by;
+      const ox = horiz ? 0 : halfWidth, oy = horiz ? halfWidth : 0;
+      // extend each leg by the half width so corners join cleanly
+      const ex = horiz ? Math.sign(bx - ax) * halfWidth : 0, ey = horiz ? 0 : Math.sign(by - ay) * halfWidth;
+      const base = pos.length / 3;
+      pos.push(ax - ex - ox, ay - ey - oy, z, ax - ex + ox, ay - ey + oy, z, bx + ex + ox, by + ey + oy, z, bx + ex - ox, by + ey - oy, z);
+      dist.push(run, run, run + len, run + len);
+      for (let k = 0; k < 4; k++) meta.push(total, phase, speed);
+      idx.push(base, base + 1, base + 2, base, base + 2, base + 3);
+      run += len;
+    }
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute('aDist', new THREE.Float32BufferAttribute(dist, 1));
+  geo.setAttribute('aMeta', new THREE.Float32BufferAttribute(meta, 3));
+  geo.setIndex(idx);
+  return geo;
+}
+
+/* ---------- the three blocks ---------- */
+const blocks = BLOCKS.map((pts, i) => {
+  const g = new THREE.Group();
+  const shape = new THREE.Shape(pts.map(([x, y]) => new THREE.Vector2(x, y)));
+  const geo = new THREE.ExtrudeGeometry(shape, {
+    depth: MARK_DEPTH - BEVEL * 2, bevelEnabled: true, bevelThickness: BEVEL, bevelSize: BEVEL, bevelOffset: -BEVEL, bevelSegments: 5,
+  });
+  const mesh = new THREE.Mesh(geo, steel);
+  mesh.position.z = -MARK_DEPTH + BEVEL;                 // front face sits at z = 0
+  g.add(mesh);
+
+  // thin light strip around the front edge
+  const outline = new THREE.BufferGeometry().setFromPoints([...pts, pts[0]].map(([x, y]) => new THREE.Vector3(x, y, 0.003)));
+  g.add(new THREE.Line(outline, edgeMat));
+
+  const paths = makeTraces(pts, [14, 26, 24][i], 3887 + i * 101);
+  const etch = new THREE.Mesh(traceGeometry(paths, 0.0045, 0.002, 1), etchMat);
+  const pulse = new THREE.Mesh(traceGeometry(paths, 0.0075, 0.004, 5521 + i * 37), pulseMat);
+  etch.material.side = pulse.material.side = THREE.DoubleSide;
+  g.add(etch, pulse);
+
+  mark.add(g);
+  return g;
+});
+
+/* ---------- the tunnel ----------
+   Hidden until the flash of light. From outside, the T is simply open and you
+   can see the sky through it. */
+const tunnel = new THREE.Group();
+tunnel.visible = false;
+const boardTime = { value: 0 };
+mark.add(tunnel);
+{
+  const L = DEPTH - MARK_DEPTH, TOP = 0.6, BOT = -1.635, H = TOP - BOT, W = GAP_R - GAP_L;
+  // Photo-scanned circuit board (ambientCG Chip001). The board's bright parts
+  // are turned into light in the shader, and bands of that light travel down
+  // the tunnel ahead of the camera.
+  const T = H;                                  // one texture tile covers the wall's full height
+  const wall = (rx, ry) => {
+    const m = new THREE.MeshStandardMaterial({
+      color: 0x8ea6d8,
+      map: tex('chip_color.jpg', true, rx, ry), normalMap: tex('chip_normal.jpg', false, rx, ry),
+      roughnessMap: tex('chip_rough.jpg', false, rx, ry), metalnessMap: tex('chip_metal.jpg', false, rx, ry),
+      normalScale: new THREE.Vector2(1.3, 1.3),
+      metalness: 1, roughness: 1, envMapIntensity: 0.3,
+      emissive: 0xffffff,                       // switched on so the shader's light is used
+    });
+    m.onBeforeCompile = (sh) => {
+      sh.uniforms.uTime = boardTime;
+      sh.vertexShader = sh.vertexShader
+        .replace('#include <common>', '#include <common>\nvarying vec3 vWp;')
+        .replace('#include <project_vertex>', '#include <project_vertex>\nvWp = (modelMatrix * vec4(transformed, 1.0)).xyz;');
+      sh.fragmentShader = sh.fragmentShader
+        .replace('#include <common>', '#include <common>\nvarying vec3 vWp;\nuniform float uTime;')
+        .replace('#include <emissivemap_fragment>', `
+          vec4 tx = texture2D(map, vMapUv);
+          float accent = smoothstep(0.03, 0.16, min(tx.r, tx.g) - tx.b);           // the board's coloured components
+          float pads = smoothstep(0.55, 0.85, min(tx.r, min(tx.g, tx.b)));        // bright pads and silkscreen
+          float lit = max(accent, pads * 0.55);
+          float wave = pow(0.5 + 0.5 * sin(vWp.z * 0.5 + uTime * 2.4), 8.0);        // light travelling into the tunnel
+          float flicker = 0.8 + 0.2 * sin(uTime * 2.3 + vWp.z * 2.1 + vWp.y * 4.7);
+          diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.02, 0.07, 0.24), accent);
+          totalEmissiveRadiance = vec3(0.07, 0.36, 2.0) * lit * (0.28 + 2.6 * wave) * flicker;
+        `);
+    };
+    return m;
+  };
+  const wallMat = wall(L / T, 1), floorMat = wall(W / T, L / T);
+  const zMid = -MARK_DEPTH - L / 2;
+  const add = (geo, mat, x, y, rx, ry) => {
+    const m = new THREE.Mesh(geo, mat);
+    m.position.set(x, y, zMid); m.rotation.set(rx, ry, 0);
+    m.renderOrder = 2;
+    tunnel.add(m);
+  };
+  add(new THREE.PlaneGeometry(L, H), wallMat, GAP_L, (TOP + BOT) / 2, 0, Math.PI / 2);     // left wall
+  add(new THREE.PlaneGeometry(L, H), wallMat, GAP_R, (TOP + BOT) / 2, 0, -Math.PI / 2);    // right wall
+  add(new THREE.PlaneGeometry(W, L), floorMat, GAP_X, BOT, -Math.PI / 2, 0);               // floor
+  add(new THREE.PlaneGeometry(W, L), floorMat, GAP_X, TOP, Math.PI / 2, 0);                // ceiling
+
+  const endGlow = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 4), new THREE.MeshBasicMaterial({ color: new THREE.Color(2.2, 3.0, 4.0) }));
+  endGlow.position.set(GAP_X, -0.4, -DEPTH + 1);
+  endGlow.renderOrder = 2;
+  tunnel.add(endGlow);
+}
+
+/* ---------- world: storm sky and rocky ground ---------- */
+const world = new THREE.Group();
+scene.add(world);
+
+const sky = new THREE.Mesh(
+  new THREE.PlaneGeometry(150, 68),
+  new THREE.ShaderMaterial({
+    depthWrite: false, fog: false,
+    uniforms: { uMap: { value: tex('sky.jpg', true) }, uTime: { value: 0 }, uFade: { value: 1 } },
+    vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+    fragmentShader: `
+      uniform sampler2D uMap; uniform float uTime, uFade; varying vec2 vUv;
+      void main() {
+        vec2 uv = vec2(vUv.x * 0.8 + 0.1 + sin(uTime * 0.02) * 0.09, vUv.y);   // drifts back and forth, stays inside the photo
+        vec3 c = texture2D(uMap, uv).rgb;
+        float l = dot(c, vec3(0.3, 0.6, 0.1));
+        float d = pow(l, 3.4);                                   // crush the mid-tones: day sky becomes storm
+        vec3 col = mix(vec3(0.001, 0.002, 0.006), vec3(0.07, 0.115, 0.26), d);
+        col += vec3(0.42, 0.56, 0.9) * pow(l, 9.0) * 0.55;          // lit cloud edges
+        col *= smoothstep(0.02, 0.5, vUv.y);                     // sink into black at the horizon
+        col *= 1.0 - 0.55 * length((vUv - vec2(0.5, 0.62)) * vec2(1.25, 1.0));   // vignette
+        gl_FragColor = vec4(max(col, 0.0) * uFade, 1.0);
+      }`,
+  })
+);
+sky.position.set(0, 9, -42);
+sky.renderOrder = -2;
+world.add(sky);
+
+const ground = (() => {
+  // small value-noise helper for the terrain shape
+  const hash = (x, y) => { const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return s - Math.floor(s); };
+  const noise = (x, y) => {
+    const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi;
+    const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+    return (hash(xi, yi) * (1 - u) + hash(xi + 1, yi) * u) * (1 - v) + (hash(xi, yi + 1) * (1 - u) + hash(xi + 1, yi + 1) * u) * v;
+  };
+  const fbm = (x, y) => { let a = 0.5, f = 1, s = 0; for (let i = 0; i < 5; i++) { s += a * noise(x * f, y * f); a *= 0.5; f *= 2.03; } return s; };
+  const mound = (x, z, cx, cz, r, h) => { const d = Math.hypot(x - cx, z - cz) / r; return d < 1 ? h * Math.pow(1 - d * d, 2) : 0; };
+
+  const geo = new THREE.PlaneGeometry(70, 46, 220, 150);
+  geo.rotateX(-Math.PI / 2);
+  const p = geo.attributes.position;
+  for (let i = 0; i < p.count; i++) {
+    const x = p.getX(i), z = p.getZ(i);
+    let h = (fbm(x * 0.22 + 3, z * 0.22) - 0.5) * 1.5 + (fbm(x * 0.9, z * 0.9 + 7) - 0.5) * 0.35;
+    h += mound(x, z, -9, -6, 9, 4.2) + mound(x, z, 11, -9, 10, 5.2) + mound(x, z, -3, -19, 12, 3.2) + mound(x, z, 17, 2, 8, 3.4) + mound(x, z, -17, 3, 8, 2.6);
+    h -= mound(x, z, 0, 1, 5, 0.8);                               // a shallow bowl under the mark
+    p.setY(i, h);
+  }
+  geo.computeVertexNormals();
+  const mat = new THREE.MeshStandardMaterial({
+    color: 0x58637a,
+    map: tex('rock_diff.jpg', true, 9, 6), normalMap: tex('rock_nor_gl.jpg', false, 9, 6), roughnessMap: tex('rock_rough.jpg', false, 9, 6),
+    normalScale: new THREE.Vector2(1.6, 1.6), metalness: 0, roughness: 1, envMapIntensity: 0.12,
+  });
+  const m = new THREE.Mesh(geo, mat);
+  m.position.set(0, -3.1, -6);
+  world.add(m);
+  return m;
+})();
+
+/* ---------- smoke drifting between the rocks ----------
+   Tall sheets of animated noise at several depths. They face the camera and
+   the hills cut across them, so the smoke sits behind and in front of things. */
+const smoke = [
+  // z, y, alpha, seed
+  [-17, -0.2, 0.55, 1.7], [-10, -1.0, 0.6, 5.2], [-4.5, -1.7, 0.55, 9.9], [3.2, -2.5, 0.34, 14.3],
+].map(([z, y, alpha, seed]) => {
+  const m = new THREE.Mesh(
+    new THREE.PlaneGeometry(80, 9),
+    new THREE.ShaderMaterial({
+      transparent: true, depthWrite: false, fog: false,
+      uniforms: { uTime: { value: 0 }, uSeed: { value: seed }, uAlpha: { value: alpha } },
+      vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+      fragmentShader: `
+        uniform float uTime, uSeed, uAlpha; varying vec2 vUv;
+        float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+        float noise(vec2 p) {
+          vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
+          return mix(mix(hash(i), hash(i + vec2(1, 0)), f.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), f.x), f.y);
+        }
+        float fbm(vec2 p) { float a = 0.5, s = 0.0; for (int i = 0; i < 4; i++) { s += a * noise(p); p = p * 2.03 + 11.7; a *= 0.5; } return s; }
+        float fbm2(vec2 p) { return 0.62 * noise(p) + 0.38 * noise(p * 2.03 + 11.7); }   // cheap version for the swirl
+        void main() {
+          vec2 q = vUv * vec2(9.0, 1.5) + uSeed;
+          q.x += uTime * 0.02;
+          vec2 warp = vec2(fbm2(q * 1.4 + uTime * 0.025), fbm2(q * 1.4 + 7.3 - uTime * 0.02));
+          float n = fbm(q + warp * 1.5);
+          float density = smoothstep(0.36, 0.8, n);
+          float vmask = smoothstep(0.0, 0.3, vUv.y) * (1.0 - smoothstep(0.3, 0.95, vUv.y));   // thickest low down
+          float hmask = smoothstep(0.0, 0.12, vUv.x) * smoothstep(1.0, 0.88, vUv.x);
+          float a = density * vmask * hmask * uAlpha;
+          vec3 col = mix(vec3(0.03, 0.05, 0.11), vec3(0.34, 0.43, 0.66), n * n * 1.6);
+          gl_FragColor = vec4(col, a);
+        }`,
+    })
+  );
+  m.position.set(0, y, z);
+  world.add(m);
+  return m;
+});
+
+/* ---------- lights ---------- */
+scene.add(new THREE.AmbientLight(0x30456f, 0.2));
+const key = new THREE.DirectionalLight(0xc4d6ff, 0.9);
+key.position.set(-5, 6, 7);
+scene.add(key);
+const rim = new THREE.DirectionalLight(0x9fb4d8, 0.55);         // faint moonlight from behind, picks out the rocks
+rim.position.set(6, 5, -10);
+scene.add(rim);
+const coreLight = new THREE.PointLight(0x3f7dff, 5, 9, 1.8);    // the channel's light spilling onto the ground
+coreLight.position.set(GAP_X, -2.3, -0.45);   // under the mark, so it lights the rock and not the face
+mark.add(coreLight);
+const headlamp = new THREE.PointLight(0x5f9bff, 0, 7, 1.4);     // travels with the camera in the tunnel
+scene.add(headlamp);
+
+/* ---------- post-processing (bloom) ---------- */
+const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, stencilBuffer: true }));
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.36, 0.6, 1.5);
+composer.addPass(bloom);
+composer.addPass(new OutputPass());
+
+/* ---------- sizing ---------- */
+const stage = $('#stage');
+let startZ = 9;
+function resize() {
+  const w = stage.clientWidth, h = stage.clientHeight;
+  renderer.setSize(w, h, false);
+  composer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  // pull the camera back until the mark (plus breathing room) fits
+  const halfV = Math.tan(THREE.MathUtils.degToRad(BASE_FOV / 2));
+  startZ = Math.max(2.5 / (halfV * camera.aspect), 3.2 / halfV);
+  scene.fog.near = startZ + 2;
+  scene.fog.far = startZ + 34;
+  needsRender = true;
+}
+
+/* ---------- scroll + pointer ---------- */
+const clamp01 = (v) => Math.min(1, Math.max(0, v));
+const smooth = (a, b, v) => { const t = clamp01((v - a) / (b - a)); return t * t * (3 - 2 * t); };
+const lerp = (a, b, t) => a + (b - a) * t;
+
+const intro = $('#intro');
+let target = 0, p = 0, needsRender = true;
+function readScroll() {
+  const r = intro.getBoundingClientRect();
+  const span = r.height - innerHeight;
+  target = span > 0 ? clamp01(-r.top / span) : 0;
+}
+const pointer = new THREE.Vector2(), pointerLag = new THREE.Vector2();
+addEventListener('pointermove', (e) => {
+  pointer.set((e.clientX / innerWidth) * 2 - 1, -((e.clientY / innerHeight) * 2 - 1));
+});
+addEventListener('scroll', readScroll, { passive: true });
+addEventListener('resize', () => { resize(); readScroll(); });
+
+const heroCopy = $('#hero-copy'), flash = $('#flash'), fade = $('#fade');
+const clock = new THREE.Clock();
+let visible = true, lastFrame = performance.now();
+new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(intro);
+
+function frame() {
+  requestAnimationFrame(frame);
+  if (visible) tick();
+}
+function tick() {
+  const t = REDUCED ? 3 : clock.getElapsedTime();
+
+  const now = performance.now(), dt = Math.min((now - lastFrame) / 1000, 0.05);
+  lastFrame = now;
+  if (REDUCED) { p = 0; }
+  else {
+    p += (target - p) * (1 - Math.exp(-dt * 6));      // same easing at any frame rate
+    if (Math.abs(target - p) < 0.00005) p = target;
+    pointerLag.lerp(pointer, 1 - Math.exp(-dt * 4));
+  }
+
+  // Hand-over: once the screen is fully white, chapter 1 (pinned underneath,
+  // also white) takes over. The stage is hidden, never scrolled away, and we
+  // stop drawing this scene so the next one has the whole frame budget.
+  const handedOver = !REDUCED && (p > 0.79 || intro.getBoundingClientRect().bottom < innerHeight - 1);
+  stage.style.visibility = handedOver ? 'hidden' : 'visible';
+  if (handedOver) return;
+
+  // 1. turn     (0.03 → 0.36): the logo turns to face you
+  // 2. approach (0.305 → 0.512): we move toward the stem of the T
+  // 3. flash    (0.41 → 0.625): a burst of light; behind it we enter the tunnel
+  // 4. tunnel   (0.512 → 0.747): about one scroll long: circuits race past on both walls
+  // 5. white    (0.70 → 0.775): the light at the end fills the screen; chapter 1 is waiting under it
+  const turn = smooth(0.03, 0.36, p);
+  const approach = smooth(0.305, 0.512, p);
+  const inTunnel = p >= 0.512;
+  const dive = clamp01((p - 0.512) / 0.235);
+  const diveEase = dive * dive * (3 - 2 * dive) * 0.55 + dive * dive * 0.45;   // gentle start, fast finish
+
+  const idle = REDUCED ? 0 : 1 - turn;
+  mark.rotation.y = lerp(-0.4, 0, turn) + pointerLag.x * 0.10 * idle + Math.sin(t * 0.4) * 0.03 * idle;
+  mark.rotation.x = lerp(0.13, 0, turn) - pointerLag.y * 0.06 * idle;
+  mark.position.y = lerp(0.5, 0, turn) + Math.sin(t * 0.7) * 0.03 * idle;
+
+  const z = inTunnel ? lerp(-1.6, -DEPTH + 6, diveEase) : lerp(lerp(startZ, 3.4, turn), 1.7, approach * approach);
+  camera.position.set(lerp(0, GAP_X, turn), lerp(0, -0.35, turn), z);
+  camera.rotation.set(0, 0, 0);
+  camera.fov = BASE_FOV + 8 * approach + 28 * smooth(0.512, 0.727, p);   // the lens widens as we accelerate
+  camera.updateProjectionMatrix();
+
+  tunnel.visible = inTunnel;
+  world.visible = !inTunnel;
+  scene.fog.near = inTunnel ? 3 : startZ + 2;
+  scene.fog.far = inTunnel ? 22 : startZ + 34;
+  headlamp.position.copy(camera.position);
+  headlamp.intensity = inTunnel ? 1.8 : 0;
+  coreLight.intensity = inTunnel ? 0 : 5;
+
+  pulseMat.uniforms.uTime.value = t;
+  boardTime.value = t;
+  for (const m of smoke) m.material.uniforms.uTime.value = t;
+  sky.material.uniforms.uTime.value = t;
+  sky.position.x = -pointerLag.x * 1.2 * idle;
+
+  heroCopy.style.opacity = 1 - smooth(0.023, 0.156, p);
+  heroCopy.style.transform = `translateY(${-p * 160}px)`;
+  flash.style.opacity = smooth(0.414, 0.508, p) * (1 - smooth(0.52, 0.625, p));
+  fade.style.opacity = smooth(0.70, 0.775, p);
+
+  if (REDUCED && !needsRender) return;
+  composer.render();
+  needsRender = false;
+}
+
+// debug handle: __titan.set(0.5) jumps straight to a point in the intro
+window.__titan = { scene, steel, bloom, renderer, set(v) { target = p = v; needsRender = true; tick(); } };
+resize();
+readScroll();
+p = target;
+frame();
+</script>
+
+<script type="module" id="titan-ch1-js">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
+
+/* Chapter 1: one workbench, one camera move.
+   The bench is where the story starts (soldering iron, a hand-built board,
+   a drawn schematic) and the taxi meter sits at its far end, because that is
+   where it was made. Scrolling walks the camera from one to the other. */
+
+const $ = (s) => document.querySelector(s);
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const A = 'assets/3d/';
+const section = $('#ch1'), stage = $('#ch1-stage'), canvas = $('#gl1');
+
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+} catch (e) {
+  canvas.style.display = 'none';
+  throw e;
+}
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));   // sharp enough, far fewer pixels than 2x
+renderer.setClearColor(0x000000);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x000000, 2.6, 8);
+const camera = new THREE.PerspectiveCamera(38, 1, 0.02, 40);
+
+const manager = new THREE.LoadingManager();
+const textures = [];
+manager.onLoad = () => {
+  // compile and upload everything up front, and draw one frame, so the chapter opens without a hitch
+  renderer.compile(scene, camera);
+  textures.forEach((t) => renderer.initTexture(t));
+  tick();
+  canvas.classList.add('ready');
+};
+const texLoader = new THREE.TextureLoader(manager);
+const maxAniso = renderer.capabilities.getMaxAnisotropy();
+function tex(file, srgb, rx = 1, ry = rx) {
+  const t = texLoader.load(A + file);
+  textures.push(t);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.repeat.set(rx, ry);
+  t.anisotropy = maxAniso;
+  if (srgb) t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+new RGBELoader(manager).load(A + 'studio.hdr', (hdr) => {
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromEquirectangular(hdr).texture;
+  hdr.dispose(); pmrem.dispose();
+});
+
+const M = (o) => new THREE.MeshStandardMaterial({ envMapIntensity: 0.4, ...o });
+const add = (parent, geo, mat, x = 0, y = 0, z = 0) => {
+  const m = new THREE.Mesh(geo, mat);
+  m.position.set(x, y, z);
+  m.castShadow = m.receiveShadow = true;
+  parent.add(m);
+  return m;
+};
+const box = (w, h, d) => new THREE.BoxGeometry(w, h, d);
+const cyl = (r, h, seg = 32, r2 = r) => new THREE.CylinderGeometry(r2, r, h, seg);
+function canvasTex(w, h, draw) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d');
+  draw(g, w, h);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = maxAniso;
+  t.userData = { g, w, h };
+  return t;
+}
+
+/* ---------- materials ---------- */
+const wood = M({ map: tex('wood_diff.jpg', true, 2.4, 1), normalMap: tex('wood_nor_gl.jpg', false, 2.4, 1), roughnessMap: tex('wood_rough.jpg', false, 2.4, 1), roughness: 1, envMapIntensity: 0.3 });
+const steel = M({ color: 0x8b93a3, map: tex('metal_color.jpg', true, 1), normalMap: tex('metal_normal.jpg', false, 1), roughnessMap: tex('metal_rough.jpg', false, 1), metalness: 0.9, roughness: 0.9 });
+const chrome = M({ color: 0xdfe6f2, metalness: 1, roughness: 0.22, envMapIntensity: 0.9 });
+const blackPlastic = M({ color: 0x0b0c0f, roughness: 0.42, metalness: 0.05, envMapIntensity: 0.5 });
+const darkPlastic = M({ color: 0x1a1d24, roughness: 0.6 });
+const bluePlastic = M({ color: 0x1b56cb, roughness: 0.5 });
+const whitePlastic = M({ color: 0x9aa1ad, roughness: 0.55 });
+
+/* ---------- room: floor and the bench ---------- */
+const TOP = 0;                       // y of the bench surface
+add(scene, new THREE.PlaneGeometry(14, 14).rotateX(-Math.PI / 2), M({ color: 0x0a0c11, roughness: 0.75, metalness: 0.1, envMapIntensity: 0.15 }), 0, -0.86, 0).castShadow = false;
+
+const bench = new THREE.Group();
+scene.add(bench);
+add(bench, box(2.3, 0.05, 0.85), wood, 0, TOP - 0.025, 0);
+for (const [x, z] of [[-1.08, -0.36], [1.08, -0.36], [-1.08, 0.36], [1.08, 0.36]]) add(bench, box(0.05, 0.81, 0.05), steel, x, TOP - 0.455, z);
+add(bench, box(2.2, 0.04, 0.04), steel, 0, TOP - 0.62, -0.36);
+add(bench, box(0.04, 0.04, 0.72), steel, -1.08, TOP - 0.62, 0);
+add(bench, box(0.04, 0.04, 0.72), steel, 1.08, TOP - 0.62, 0);
+
+/* ---------- the hand-built circuit board ---------- */
+const pcb = new THREE.Group();
+pcb.position.set(-0.45, TOP, 0.1);
+pcb.rotation.y = 0.18;
+scene.add(pcb);
+add(pcb, box(0.34, 0.006, 0.23), M({
+  color: 0x6f96ff, map: tex('chip_color.jpg', true, 1.2, 0.8), normalMap: tex('chip_normal.jpg', false, 1.2, 0.8),
+  roughnessMap: tex('chip_rough.jpg', false, 1.2, 0.8), metalnessMap: tex('chip_metal.jpg', false, 1.2, 0.8), metalness: 1, roughness: 1,
+}), 0, 0.003, 0);
+{
+  let sd = 1987;
+  const r = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+  for (let i = 0; i < 5; i++) add(pcb, box(0.04 + r() * 0.03, 0.008, 0.016), blackPlastic, -0.12 + r() * 0.24, 0.01, -0.08 + r() * 0.16);   // chips
+  for (let i = 0; i < 6; i++) {                                                                                                          // capacitors
+    const h = 0.018 + r() * 0.02, rad = 0.006 + r() * 0.005;
+    const x = -0.14 + r() * 0.28, z = -0.09 + r() * 0.18;
+    add(pcb, cyl(rad, h), i % 2 ? bluePlastic : blackPlastic, x, 0.006 + h / 2, z);
+    add(pcb, cyl(rad * 0.98, 0.001), chrome, x, 0.0065 + h, z);
+  }
+  for (let i = 0; i < 9; i++) add(pcb, cyl(0.0022, 0.012, 10), M({ color: [0xc9a36a, 0x7a4a2a, 0x3565c9][i % 3], roughness: 0.5 }), -0.14 + r() * 0.28, 0.009, -0.09 + r() * 0.18).rotation.z = Math.PI / 2;  // resistors
+}
+
+/* ---------- soldering iron, its stand and station ---------- */
+const iron = new THREE.Group();
+iron.position.set(-0.17, TOP + 0.045, 0.24);
+iron.rotation.set(0, 0.55, -0.22);                       // tip toward the board, slightly down
+scene.add(iron);
+add(iron, cyl(0.012, 0.13), bluePlastic).rotation.z = Math.PI / 2;
+add(iron, cyl(0.014, 0.012), darkPlastic, -0.068, 0, 0).rotation.z = Math.PI / 2;
+add(iron, cyl(0.0045, 0.075, 16), chrome, -0.11, 0, 0).rotation.z = Math.PI / 2;
+const tip = add(iron, cyl(0.0045, 0.03, 16, 0.0008), M({ color: 0x8a6a4a, metalness: 0.9, roughness: 0.35, emissive: 0xff5a1a, emissiveIntensity: 0.5 }), -0.162, 0, 0);
+tip.rotation.z = Math.PI / 2;
+// stand: a small coil holder
+add(scene, cyl(0.035, 0.012), steel, -0.2, TOP + 0.006, 0.255);
+add(scene, new THREE.TorusGeometry(0.016, 0.003, 10, 24), chrome, -0.232, TOP + 0.036, 0.275).rotation.y = 0.55 + Math.PI / 2;
+// station
+const station = new THREE.Group();
+station.position.set(-0.02, TOP, -0.2);
+station.rotation.y = -0.2;
+scene.add(station);
+add(station, box(0.13, 0.09, 0.15), darkPlastic, 0, 0.045, 0);
+add(station, cyl(0.02, 0.012), whitePlastic, -0.025, 0.05, 0.078).rotation.x = Math.PI / 2;
+add(station, cyl(0.004, 0.004), new THREE.MeshBasicMaterial({ color: new THREE.Color(0.3, 0.9, 3) }), 0.035, 0.065, 0.076).rotation.x = Math.PI / 2;
+// cable from the handle to the station
+{
+  const curve = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(-0.115, TOP + 0.06, 0.205), new THREE.Vector3(-0.06, TOP + 0.02, 0.12), new THREE.Vector3(0.02, TOP + 0.006, 0.02),
+    new THREE.Vector3(0.05, TOP + 0.01, -0.08), new THREE.Vector3(0.0, TOP + 0.03, -0.125),
+  ]);
+  add(scene, new THREE.TubeGeometry(curve, 40, 0.0035, 8), darkPlastic);
+}
+// solder spool
+add(scene, cyl(0.03, 0.035), whitePlastic, -0.78, TOP + 0.0175, 0.12);
+add(scene, cyl(0.022, 0.03), chrome, -0.78, TOP + 0.0185, 0.12);
+
+/* ---------- a hand-drawn schematic ---------- */
+const sheet = add(scene, new THREE.PlaneGeometry(0.3, 0.21).rotateX(-Math.PI / 2), M({
+  color: 0xa9afba, roughness: 0.95, envMapIntensity: 0.1,
+  map: canvasTex(600, 420, (g, w, h) => {
+    g.fillStyle = '#e9edf3'; g.fillRect(0, 0, w, h);
+    g.strokeStyle = 'rgba(27,86,203,0.16)'; g.lineWidth = 1;
+    for (let x = 0; x < w; x += 20) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, h); g.stroke(); }
+    for (let y = 0; y < h; y += 20) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); }
+    g.strokeStyle = '#1b3f95'; g.lineWidth = 2.2; g.lineJoin = 'round';
+    const line = (...p) => { g.beginPath(); g.moveTo(p[0], p[1]); for (let i = 2; i < p.length; i += 2) g.lineTo(p[i], p[i + 1]); g.stroke(); };
+    line(60, 120, 140, 120); line(140, 120, 150, 105, 165, 135, 180, 105, 195, 135, 205, 120, 280, 120);     // resistor
+    g.strokeRect(280, 80, 120, 80); line(400, 100, 470, 100); line(400, 140, 470, 140);                      // IC
+    line(470, 100, 470, 60, 540, 60); line(470, 140, 470, 200); line(455, 200, 485, 200); line(462, 208, 478, 208);
+    line(60, 120, 60, 260, 200, 260); line(200, 240, 200, 280); line(212, 246, 212, 274); line(212, 260, 340, 260, 340, 160);   // capacitor
+    g.fillStyle = '#1b3f95'; g.font = '18px "JetBrains Mono", monospace';
+    g.fillText('R1 10k', 140, 90); g.fillText('U1', 325, 125); g.fillText('C1', 190, 310); g.fillText('+5V', 500, 50);
+    g.font = '15px "JetBrains Mono", monospace'; g.fillText('TITAN · 1987 · REV A', 380, 395);
+  }),
+}), 0.17, TOP + 0.0012, 0.2);
+sheet.rotation.y = -0.22;
+sheet.castShadow = false;
+// a pencil on the sheet
+const pencil = add(scene, cyl(0.0035, 0.15, 6), M({ color: 0x1b56cb, roughness: 0.5 }), 0.25, TOP + 0.006, 0.13);
+pencil.rotation.set(0, 0.5, Math.PI / 2);
+
+/* ---------- desk lamp ---------- */
+{
+  const lamp = new THREE.Group();
+  scene.add(lamp);
+  const rod = (a, b) => {
+    const d = new THREE.Vector3().subVectors(b, a);
+    const m = add(lamp, cyl(0.007, d.length(), 12), steel);
+    m.position.copy(a).addScaledVector(d, 0.5);
+    m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.clone().normalize());
+  };
+  const base = new THREE.Vector3(-0.92, TOP, -0.26), elbow = new THREE.Vector3(-0.98, TOP + 0.42, -0.3), head = new THREE.Vector3(-0.62, TOP + 0.5, -0.06);
+  add(lamp, cyl(0.07, 0.02), darkPlastic, base.x, TOP + 0.01, base.z);
+  rod(base, elbow); rod(elbow, head);
+  add(lamp, new THREE.SphereGeometry(0.014, 16, 12), steel, elbow.x, elbow.y, elbow.z);
+  const aim = new THREE.Vector3(-0.42, TOP, 0.12);
+  const shade = add(lamp, new THREE.ConeGeometry(0.075, 0.1, 32, 1, true), M({ color: 0x1b56cb, roughness: 0.4, metalness: 0.4, side: THREE.DoubleSide }), head.x, head.y, head.z);
+  shade.quaternion.setFromUnitVectors(new THREE.Vector3(0, -1, 0), new THREE.Vector3().subVectors(aim, head).normalize());
+  const bulb = add(lamp, new THREE.SphereGeometry(0.022, 16, 12), new THREE.MeshBasicMaterial({ color: new THREE.Color(3, 3.2, 3.6) }), head.x, head.y, head.z);
+  bulb.position.addScaledVector(new THREE.Vector3().subVectors(aim, head).normalize(), 0.03);
+  bulb.castShadow = false;
+
+  const spot = new THREE.SpotLight(0xe6eeff, 8.5, 4, 0.78, 0.75, 1.8);
+  spot.position.copy(head);
+  spot.target.position.copy(aim);
+  spot.castShadow = true;
+  spot.shadow.mapSize.set(1024, 1024);
+  spot.shadow.bias = -0.0008;
+  spot.shadow.camera.near = 0.1; spot.shadow.camera.far = 3;
+  scene.add(spot, spot.target);
+}
+
+/* ---------- the taxi meter (modelled on the photo of the real one) ---------- */
+const meter = new THREE.Group();
+meter.position.set(0.66, TOP, 0.08);
+meter.rotation.y = -0.16;
+scene.add(meter);
+const MW = 0.3, MH = 0.085, MD = 0.2, FRONT = MD / 2;
+add(meter, box(MW, MH, MD), blackPlastic, 0, MH / 2, 0);
+add(meter, box(MW + 0.006, 0.006, 0.004), blackPlastic, 0, MH - 0.003, FRONT + 0.002);     // raised frame around the face
+add(meter, box(MW + 0.006, 0.006, 0.004), blackPlastic, 0, 0.003, FRONT + 0.002);
+add(meter, box(0.006, MH, 0.004), blackPlastic, -MW / 2, MH / 2, FRONT + 0.002);
+add(meter, box(0.006, MH, 0.004), blackPlastic, MW / 2, MH / 2, FRONT + 0.002);
+add(meter, box(0.001, MH, MD), M({ color: 0x000000, roughness: 0.9 }), 0.012, MH / 2 + 0.0005, 0.0005).scale.set(1, 1.004, 1.004);   // case seam
+
+// seven-segment display
+const SEG = { a: [1, 0, 8, 1], b: [9, 1, 1, 8], c: [9, 10, 1, 8], d: [1, 18, 8, 1], e: [0, 10, 1, 8], f: [0, 1, 1, 8], g: [1, 9, 8, 1] };
+const DIGITS = { 0: 'abcdef', 1: 'bc', 2: 'abged', 3: 'abgcd', 4: 'fgbc', 5: 'afgcd', 6: 'afgedc', 7: 'abc', 8: 'abcdefg', 9: 'abfgcd', ' ': '' };
+const displayTex = canvasTex(640, 160, () => {});
+function drawDisplay(text, on) {
+  const { g, w, h } = displayTex.userData;
+  g.fillStyle = '#01030a'; g.fillRect(0, 0, w, h);
+  const u = 5.6, x0 = 26, y0 = 28, pitch = 96;
+  const seg = (cx, name) => { const [x, y, sw, sh] = SEG[name]; g.fillRect(cx + x * u, y0 + y * u, sw * u, sh * u); };
+  let col = 0;
+  for (const ch of text) {
+    if (ch === '.') { g.fillStyle = on ? '#8fbcff' : 'rgba(60,100,220,0.2)'; g.fillRect(x0 + col * pitch - 22, y0 + 17.5 * u, u * 1.4, u * 1.4); continue; }
+    const cx = x0 + col * pitch;
+    g.shadowBlur = 0; g.fillStyle = 'rgba(60,100,220,0.16)';
+    for (const s of 'abcdefg') seg(cx, s);                       // unlit ghost segments, as on the real display
+    if (on) {
+      g.shadowColor = '#3f7dff'; g.shadowBlur = 16; g.fillStyle = '#9cc4ff';
+      for (const s of DIGITS[ch] || '') seg(cx, s);
+    }
+    col++;
+  }
+  g.shadowBlur = 0;
+  displayTex.needsUpdate = true;
+}
+const displayMat = new THREE.MeshBasicMaterial({ map: displayTex, color: new THREE.Color(1.7, 1.7, 1.7) });
+add(meter, new THREE.PlaneGeometry(0.132, 0.033), displayMat, -0.062, 0.058, FRONT + 0.0015).castShadow = false;
+const displayLight = new THREE.PointLight(0x3f7dff, 0, 0.6, 2);
+displayLight.position.set(-0.062, 0.058, FRONT + 0.08);
+meter.add(displayLight);
+
+// three knobs, the jack and the wires
+for (const x of [-0.108, -0.066, -0.024]) {
+  const k = add(meter, cyl(0.0105, 0.012, 28), chrome, x, 0.024, FRONT + 0.008);
+  k.rotation.x = Math.PI / 2;
+  add(meter, cyl(0.0125, 0.003, 28), steel, x, 0.024, FRONT + 0.002).rotation.x = Math.PI / 2;
+}
+add(meter, cyl(0.005, 0.004, 20), chrome, 0.118, 0.022, FRONT + 0.002).rotation.x = Math.PI / 2;
+add(meter, cyl(0.0028, 0.0045, 16), M({ color: 0x000000, roughness: 1 }), 0.118, 0.022, FRONT + 0.0022).rotation.x = Math.PI / 2;
+for (const [c, dz] of [[0xb3131b, 0], [0x0c0c0c, 0.014]]) {
+  const curve = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(MW / 2 - 0.01, 0.05, -0.06 + dz), new THREE.Vector3(MW / 2 + 0.05, 0.045, -0.07 + dz),
+    new THREE.Vector3(MW / 2 + 0.1, 0.008, -0.1 + dz), new THREE.Vector3(MW / 2 + 0.2, 0.004, -0.2 + dz),
+  ]);
+  add(meter, new THREE.TubeGeometry(curve, 30, 0.003, 8), M({ color: c, roughness: 0.5 }));
+}
+
+// receipt printer: a slot in the top and the paper that feeds out of it
+add(meter, box(0.098, 0.002, 0.012), M({ color: 0x000000, roughness: 1 }), 0.075, MH + 0.0008, FRONT - 0.03);
+const receipt = (() => {
+  const LEN = 0.125;
+  const geo = new THREE.PlaneGeometry(0.09, LEN, 1, 16);
+  geo.translate(0, LEN / 2, 0);
+  const p = geo.attributes.position;
+  for (let i = 0; i < p.count; i++) { const t = p.getY(i) / LEN; p.setZ(i, 0.03 * t * t - 0.012 * t); }   // leans forward as it grows
+  geo.computeVertexNormals();
+  const m = add(meter, geo, M({
+    color: 0xb9bec8, side: THREE.DoubleSide, roughness: 0.9, envMapIntensity: 0.15,
+    map: canvasTex(360, 500, (g, w, h) => {
+      g.fillStyle = '#f1f3f6'; g.fillRect(0, 0, w, h);
+      g.fillStyle = '#20242c'; g.textAlign = 'center';
+      g.font = '600 24px "JetBrains Mono", monospace'; g.fillText('TITAN TAXI METER', w / 2, 46);
+      g.font = '18px "JetBrains Mono", monospace';
+      const rows = ['CEBU CITY, PHILIPPINES', '------------------------', '', 'TIME START    02:53 PM', 'TIME END      03:04 PM', 'WAIT TIME        00:00',
+        'DISTANCE        4.2 KM', 'UNITS             0000', '', '------------------------', 'AMOUNT         P 30.00', '------------------------', '', 'THANK YOU', 'RIDE WITH US AGAIN'];
+      rows.forEach((r, i) => g.fillText(r, w / 2, 86 + i * 27));
+    }),
+  }), 0.075, MH, FRONT - 0.03);
+  m.castShadow = false;
+  return m;
+})();
+
+/* ---------- lights ---------- */
+scene.add(new THREE.AmbientLight(0x2a3a5c, 0.25));
+const rim = new THREE.DirectionalLight(0x3f6dff, 1.5);
+rim.position.set(2.5, 1.6, -2.5);
+scene.add(rim);
+const fill = new THREE.DirectionalLight(0xbfd0ff, 0.5);
+fill.position.set(0.5, 2, 3);
+scene.add(fill);
+const meterKey = new THREE.SpotLight(0xdde8ff, 0, 3.5, 0.5, 0.8, 1.8);      // comes up as we reach the meter
+meterKey.position.set(1.1, 0.9, 1.0);
+meterKey.target.position.set(0.66, 0.04, 0.1);
+scene.add(meterKey, meterKey.target);
+
+/* ---------- post-processing ---------- */
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+composer.addPass(new UnrealBloomPass(new THREE.Vector2(1, 1), 0.4, 0.5, 1.2));
+composer.addPass(new OutputPass());
+
+function resize() {
+  const w = stage.clientWidth, h = stage.clientHeight;
+  renderer.setSize(w, h, false);
+  composer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+
+/* ---------- scroll: the camera's walk along the bench ---------- */
+const clamp01 = (v) => Math.min(1, Math.max(0, v));
+const smooth = (a, b, v) => { const t = clamp01((v - a) / (b - a)); return t * t * (3 - 2 * t); };
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+const KEYS = [
+  // p, camera position, look-at
+  [0.00, V(-0.72, 0.80, 1.98), V(-0.34, 0.04, 0.02)],     // the bench, from a step back
+  [0.14, V(-0.62, 0.66, 1.62), V(-0.34, 0.04, 0.02)],
+  [0.30, V(-0.52, 0.34, 0.78), V(-0.40, 0.03, 0.10)],     // the board and the iron
+  [0.55, V(0.30, 0.30, 0.86), V(0.50, 0.05, 0.08)],       // travelling along the bench
+  [0.72, V(0.70, 0.135, 0.66), V(0.655, 0.052, 0.10)],    // the taxi meter
+  [1.00, V(0.76, 0.15, 0.58), V(0.665, 0.058, 0.10)],
+];
+const camPos = new THREE.Vector3(), camLook = new THREE.Vector3();
+function cameraAt(p) {
+  let i = 0;
+  while (i < KEYS.length - 2 && p > KEYS[i + 1][0]) i++;
+  const [p0, a0, l0] = KEYS[i], [p1, a1, l1] = KEYS[i + 1];
+  const t = smooth(p0, p1, p);
+  camPos.lerpVectors(a0, a1, t); camLook.lerpVectors(l0, l1, t);
+  // narrow screens: step back so the subject still fits
+  const back = camera.aspect < 1 ? 1.75 : camera.aspect < 1.4 ? 1.25 : 1;
+  camPos.sub(camLook).multiplyScalar(back).add(camLook);
+}
+
+const copyA = $('#ch1-a'), copyB = $('#ch1-b'), veil = $('#ch1-veil');
+const CONTENT = 330 / 390;      // the chapter's own content ends here; the rest overlaps chapter 2
+let target = 0, p = 0, lastFare = '', visible = false, lastFrame = performance.now();
+function readScroll() {
+  const r = section.getBoundingClientRect();
+  const span = r.height - innerHeight;
+  target = span > 0 ? clamp01(-r.top / span) : 0;
+}
+addEventListener('scroll', readScroll, { passive: true });
+addEventListener('resize', () => { resize(); readScroll(); });
+new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(section);
+
+const clock = new THREE.Clock();
+function tick() {
+  const t = REDUCED ? 2 : clock.getElapsedTime();
+  const now = performance.now(), dt = Math.min((now - lastFrame) / 1000, 0.05);
+  lastFrame = now;
+  if (!REDUCED) { p += (target - p) * (1 - Math.exp(-dt * 6)); if (Math.abs(target - p) < 0.00005) p = target; }
+
+  // The last stretch of this section overlaps chapter 2. Once this scene has
+  // gone white, its stage is hidden (never scrolled away) and it stops drawing.
+  const handedOver = !REDUCED && (p > CONTENT + 0.012 || section.getBoundingClientRect().bottom < innerHeight - 1);
+  stage.style.visibility = handedOver ? 'hidden' : 'visible';
+  if (handedOver) return;
+  const q = REDUCED ? 0.86 : Math.min(1, p / CONTENT);     // progress through the chapter's own content
+
+  cameraAt(q);
+  camera.position.copy(camPos);
+  if (!REDUCED) camera.position.x += Math.sin(t * 0.25) * 0.012;   // a slight handheld drift
+  camera.lookAt(camLook);
+
+  // the meter wakes up, the fare climbs, the receipt prints
+  const on = q > 0.6;
+  const fare = Math.round(30 * smooth(0.64, 0.8, q) * 2) / 2;
+  const text = on ? fare.toFixed(2).padStart(7, ' ') : '       ';
+  if (text + on !== lastFare) { drawDisplay(text, on); lastFare = text + on; }
+  displayLight.intensity = on ? 0.5 : 0;
+  meterKey.intensity = 7 * smooth(0.45, 0.7, q);
+  receipt.scale.y = 0.02 + 0.98 * smooth(0.8, 0.9, q);
+  receipt.visible = q > 0.79;
+  tip.material.emissiveIntensity = 0.45 + 0.12 * Math.sin(t * 2.1);
+
+  if (!REDUCED) {
+    copyA.style.opacity = smooth(0.1, 0.19, q) * (1 - smooth(0.36, 0.45, q));
+    copyB.style.opacity = smooth(0.58, 0.68, q) * (1 - smooth(0.92, 0.97, q));
+    veil.style.opacity = Math.max(1 - smooth(0.0, 0.11, q), smooth(0.93, 0.995, q));   // in from white, out to white
+  }
+  composer.render();
+}
+// chapter 1 overlaps the end of the intro, so only draw once it is nearly on screen:
+// this avoids running both 3D scenes at once during the tunnel
+function frame() { requestAnimationFrame(frame); if (visible && section.getBoundingClientRect().top < innerHeight * 0.12) tick(); }
+
+// debug handle: __ch1.set(0.8) jumps straight to a point in the chapter
+window.__ch1 = { set(v) { target = p = v; tick(); } };
+resize();
+readScroll();
+p = target;
+drawDisplay('       ', false);
+frame();
+</script>
+
+<script type="module" id="titan-ch2-js">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
+
+/* Chapter 2: the oxygen plant.
+   A PSA skid like the ones in the site photos: two white adsorber towers, a
+   buffer tank, pipework and valves, standing on a blue plant-room floor. The
+   camera walks in to the control cabinet, where the screen shows the three
+   things the system watches: purity, pressure and flow. */
+
+const $ = (s) => document.querySelector(s);
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const A = 'assets/3d/';
+const section = $('#ch2'), stage = $('#ch2-stage'), canvas = $('#gl2');
+
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+} catch (e) {
+  canvas.style.display = 'none';
+  throw e;
+}
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+renderer.setClearColor(0x04060b);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x04060b, 7, 17);
+const camera = new THREE.PerspectiveCamera(40, 1, 0.05, 60);
+
+const textures = [];
+const manager = new THREE.LoadingManager();
+manager.onLoad = () => {
+  // compile and upload everything up front, and draw one frame, so the chapter opens without a hitch
+  renderer.compile(scene, camera);
+  textures.forEach((t) => renderer.initTexture(t));
+  tick();
+  canvas.classList.add('ready');
+};
+const texLoader = new THREE.TextureLoader(manager);
+const maxAniso = renderer.capabilities.getMaxAnisotropy();
+function tex(file, srgb, rx = 1, ry = rx) {
+  const t = texLoader.load(A + file);
+  textures.push(t);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.repeat.set(rx, ry);
+  t.anisotropy = maxAniso;
+  if (srgb) t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+new RGBELoader(manager).load(A + 'studio.hdr', (hdr) => {
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromEquirectangular(hdr).texture;
+  hdr.dispose(); pmrem.dispose();
+});
+
+const M = (o) => new THREE.MeshStandardMaterial({ envMapIntensity: 0.45, ...o });
+const add = (parent, geo, mat, x = 0, y = 0, z = 0) => {
+  const m = new THREE.Mesh(geo, mat);
+  m.position.set(x, y, z);
+  m.castShadow = m.receiveShadow = true;
+  parent.add(m);
+  return m;
+};
+const box = (w, h, d) => new THREE.BoxGeometry(w, h, d);
+const cyl = (r, h, seg = 40, r2 = r) => new THREE.CylinderGeometry(r2, r, h, seg);
+function canvasTex(w, h, draw) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d');
+  if (draw) draw(g, w, h);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = maxAniso;
+  t.userData = { c, g, w, h };
+  return t;
+}
+
+/* ---------- materials ---------- */
+const tankPaint = new THREE.MeshPhysicalMaterial({ color: 0xe4e9f0, roughness: 0.42, metalness: 0.05, clearcoat: 0.45, clearcoatRoughness: 0.35, envMapIntensity: 0.5 });
+const steel = M({ color: 0xaab2c0, map: tex('metal_color.jpg', true, 2), normalMap: tex('metal_normal.jpg', false, 2), roughnessMap: tex('metal_rough.jpg', false, 2), metalness: 0.9, roughness: 0.85, envMapIntensity: 0.7 });
+const whiteSteel = M({ color: 0xcfd5de, roughness: 0.5, metalness: 0.2 });
+const bluePaint = M({ color: 0x1b56cb, roughness: 0.4, metalness: 0.2 });
+const dark = M({ color: 0x14171d, roughness: 0.6 });
+
+/* ---------- plant room ---------- */
+const floor = add(scene, new THREE.PlaneGeometry(20, 16).rotateX(-Math.PI / 2), M({ color: 0x1546b4, roughness: 0.2, metalness: 0.0, envMapIntensity: 0.65 }), 0, 0, 1);
+floor.castShadow = false;
+add(scene, new THREE.PlaneGeometry(20, 8), M({ color: 0x5d6675, roughness: 0.95, envMapIntensity: 0.1 }), 0, 4, -3.2).castShadow = false;
+// a white guide line on the floor in front of the skid
+add(scene, new THREE.PlaneGeometry(4.2, 0.07).rotateX(-Math.PI / 2), M({ color: 0xdfe6f0, roughness: 0.5 }), 0, 0.002, 1.25).castShadow = false;
+
+/* ---------- partner logo (assets/bmc.jpg), cleaned up for use on the tanks and in the caption ---------- */
+const logoTex = canvasTex(512, 512);
+const logoImg = new Image();
+logoImg.onload = () => {
+  const { c, g } = logoTex.userData;
+  // the file has a grey studio backdrop: keep only the coloured artwork (blue gear, gold diamond)
+  const crop = logoImg.width * 0.86, off = (logoImg.width - crop) / 2;
+  g.drawImage(logoImg, off, off, crop, crop, 0, 0, 512, 512);
+  const d = g.getImageData(0, 0, 512, 512), px = d.data;
+  for (let i = 0; i < px.length; i += 4) {
+    const sat = Math.max(px[i], px[i + 1], px[i + 2]) - Math.min(px[i], px[i + 1], px[i + 2]);
+    px[i + 3] = Math.min(255, Math.max(0, (sat - 22) * 9));
+  }
+  g.putImageData(d, 0, 0);
+  logoTex.needsUpdate = true;
+  // caption badge: the same artwork on a white disc
+  const badge = $('#bmc-badge'), b = badge.getContext('2d'), S = badge.width;
+  b.fillStyle = '#ffffff'; b.beginPath(); b.arc(S / 2, S / 2, S / 2, 0, 7); b.fill();
+  b.drawImage(c, S * 0.04, S * 0.04, S * 0.92, S * 0.92);
+};
+logoImg.src = 'assets/bmc.jpg';
+
+const psaTex = canvasTex(256, 128, (g, w, h) => {
+  g.fillStyle = '#1b3f95'; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.font = '700 86px Sora, sans-serif'; g.fillText('PSA', w / 2, h / 2 + 4);
+});
+const decalMat = (map) => M({ map, transparent: true, roughness: 0.5, polygonOffset: true, polygonOffsetFactor: -2, envMapIntensity: 0.3 });
+
+/* ---------- tanks ---------- */
+function tank(x, z, r, h, legs = 0.55, faceAngle = 0) {
+  const g = new THREE.Group();
+  g.position.set(x, 0, z);
+  g.rotation.y = faceAngle;
+  scene.add(g);
+  const head = r * 0.55, pts = [];
+  for (let i = 0; i <= 12; i++) { const a = (i / 12) * Math.PI / 2; pts.push(new THREE.Vector2(Math.sin(a) * r, head - Math.cos(a) * head)); }
+  for (let i = 0; i <= 12; i++) { const a = (i / 12) * Math.PI / 2; pts.push(new THREE.Vector2(Math.cos(a) * r, h - head + Math.sin(a) * head)); }
+  add(g, new THREE.LatheGeometry(pts, 64), tankPaint, 0, legs, 0);
+  // legs with foot plates
+  for (let i = 0; i < 4; i++) {
+    const a = Math.PI / 4 + (i * Math.PI) / 2, lx = Math.sin(a) * r * 0.82, lz = Math.cos(a) * r * 0.82;
+    add(g, cyl(0.035, legs + head, 12), tankPaint, lx, (legs + head) / 2, lz);
+    add(g, box(0.16, 0.015, 0.16), whiteSteel, lx, 0.008, lz);
+  }
+  // weld seams, top nozzle and flange
+  for (const y of [legs + head + 0.02, legs + h - head - 0.02]) add(g, new THREE.TorusGeometry(r + 0.002, 0.008, 8, 64).rotateX(Math.PI / 2), tankPaint, 0, y, 0);
+  add(g, cyl(0.06, 0.16), tankPaint, 0, legs + h + 0.05, 0);
+  add(g, cyl(0.11, 0.025), steel, 0, legs + h + 0.14, 0);
+  // markings: the partner's emblem and "PSA", as on the real towers
+  const arc = (width) => width / r;
+  const logo = new THREE.Mesh(new THREE.CylinderGeometry(r + 0.004, r + 0.004, 0.46, 32, 1, true, -arc(0.46) / 2, arc(0.46)), decalMat(logoTex));
+  logo.position.y = legs + h * 0.66; g.add(logo);
+  const psa = new THREE.Mesh(new THREE.CylinderGeometry(r + 0.004, r + 0.004, 0.17, 32, 1, true, -arc(0.34) / 2, arc(0.34)), decalMat(psaTex));
+  psa.position.y = legs + h * 0.66 - 0.4; g.add(psa);
+  return g;
+}
+const TX = 0.72;                       // the two adsorber towers sit either side of the cabinet
+tank(-TX, 0, 0.46, 2.9, 0.55, 0.2);
+tank(TX, 0, 0.46, 2.9, 0.55, -0.2);
+tank(-2.25, -0.5, 0.56, 2.3, 0.4, 0.42);   // buffer tank
+
+/* ---------- skid, pipework and valves ---------- */
+add(scene, box(2.7, 0.1, 1.5), whiteSteel, 0, 0.05, 0.15);
+function pipe(points, r = 0.035, mat = steel) {
+  for (let i = 0; i < points.length; i++) {
+    const a = new THREE.Vector3(...points[i]);
+    add(scene, new THREE.SphereGeometry(r * 1.02, 16, 12), mat, a.x, a.y, a.z);
+    if (i === points.length - 1) break;
+    const b = new THREE.Vector3(...points[i + 1]), d = new THREE.Vector3().subVectors(b, a);
+    const m = add(scene, cyl(r, d.length(), 20), mat);
+    m.position.copy(a).addScaledVector(d, 0.5);
+    m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize());
+  }
+}
+const flange = (x, y, z, axis = 'x', r = 0.065) => {
+  const m = add(scene, cyl(r, 0.03, 24), steel, x, y, z);
+  if (axis === 'x') m.rotation.z = Math.PI / 2; else if (axis === 'z') m.rotation.x = Math.PI / 2;
+};
+function valve(x, y, z) {
+  add(scene, new THREE.SphereGeometry(0.075, 20, 14), steel, x, y, z);
+  add(scene, cyl(0.022, 0.1, 12), steel, x, y + 0.11, z);
+  add(scene, cyl(0.07, 0.17, 24), bluePaint, x, y + 0.24, z);          // pneumatic actuator
+  flange(x - 0.1, y, z); flange(x + 0.1, y, z);
+}
+const Y1 = 0.72, ZF = 0.52;            // lower header, in front of the towers
+pipe([[-TX, 0.62, 0], [-TX, Y1, 0.2], [-TX, Y1, ZF], [TX, Y1, ZF], [TX, Y1, 0.2], [TX, 0.62, 0]]);
+valve(-0.36, Y1, ZF); valve(0.36, Y1, ZF);
+const YT = 3.72;                       // upper header, across the tower tops
+pipe([[-TX, 3.6, 0], [-TX, YT, 0], [TX, YT, 0], [TX, 3.6, 0]], 0.03);
+valve(0, YT, 0);
+pipe([[-TX, Y1, 0.2], [-1.5, Y1, 0.2], [-1.5, Y1, -0.5], [-1.69, Y1, -0.5]], 0.03);     // to the buffer tank
+pipe([[TX, Y1, ZF], [1.55, Y1, ZF], [1.55, 0.35, ZF], [2.4, 0.35, ZF]], 0.03);          // product line out
+// two pressure gauges
+for (const x of [-0.05, 1.2]) {
+  add(scene, cyl(0.008, 0.08, 8), steel, x, Y1 + 0.07, ZF);
+  const gauge = add(scene, cyl(0.05, 0.022, 28), whiteSteel, x, Y1 + 0.15, ZF);
+  gauge.rotation.x = Math.PI / 2;
+}
+// air dryer cabinet, as in the plant photos
+add(scene, box(0.95, 1.0, 0.75), bluePaint, 2.55, 0.5, -0.35);
+add(scene, box(0.6, 0.22, 0.02), dark, 2.55, 0.72, 0.035);
+
+/* ---------- the control cabinet: Titan's part of the plant ---------- */
+const CAB = new THREE.Vector3(0, 1.3, 0.78);
+add(scene, box(0.06, 1.0, 0.06), whiteSteel, 0, 0.6, CAB.z - 0.04);
+add(scene, box(0.56, 0.72, 0.2), whiteSteel, CAB.x, CAB.y, CAB.z);
+const DOOR = CAB.z + 0.101;
+add(scene, box(0.5, 0.66, 0.006), M({ color: 0xdfe4ec, roughness: 0.45, metalness: 0.2 }), 0, CAB.y, DOOR);
+add(scene, box(0.34, 0.225, 0.012), dark, 0, CAB.y + 0.13, DOOR + 0.006);     // screen bezel
+
+const hmiTex = canvasTex(720, 450);
+const hmi = add(scene, new THREE.PlaneGeometry(0.31, 0.194), new THREE.MeshBasicMaterial({ map: hmiTex, color: new THREE.Color(1.25, 1.25, 1.25) }), 0, CAB.y + 0.13, DOOR + 0.0125);
+hmi.castShadow = false;
+const hmiLight = new THREE.PointLight(0x3f7dff, 0.5, 1.4, 2);
+hmiLight.position.set(0, CAB.y + 0.13, DOOR + 0.25);
+scene.add(hmiLight);
+// indicator lamps, selector switch and nameplate
+[[-0.14, 0x58a0ff], [-0.07, 0xdfe9ff], [0, 0x58a0ff]].forEach(([x, c]) => {
+  add(scene, cyl(0.016, 0.012, 20), steel, x, CAB.y - 0.1, DOOR + 0.008).rotation.x = Math.PI / 2;
+  const lamp = add(scene, cyl(0.012, 0.014, 20), new THREE.MeshBasicMaterial({ color: new THREE.Color(c).multiplyScalar(2.2) }), x, CAB.y - 0.1, DOOR + 0.012);
+  lamp.rotation.x = Math.PI / 2; lamp.castShadow = false;
+});
+add(scene, cyl(0.022, 0.02, 24), dark, 0.12, CAB.y - 0.1, DOOR + 0.012).rotation.x = Math.PI / 2;
+add(scene, new THREE.PlaneGeometry(0.3, 0.045), M({
+  roughness: 0.5, metalness: 0.3,
+  map: canvasTex(600, 90, (g, w, h) => {
+    g.fillStyle = '#12244f'; g.fillRect(0, 0, w, h);
+    g.fillStyle = '#e6f4ff'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.font = '700 40px Sora, sans-serif'; g.fillText('TITAN TECHNOLOGIES', w / 2, h / 2 + 2);
+  }),
+}), 0, CAB.y - 0.22, DOOR + 0.004).castShadow = false;
+
+// what the screen shows. Figures are typical for a PSA oxygen plant and move a little, like live readings.
+const trace = Array.from({ length: 60 }, () => 0.5);
+function drawHMI(t, on) {
+  const { g, w, h } = hmiTex.userData;
+  g.fillStyle = '#040b1e'; g.fillRect(0, 0, w, h);
+  if (!on) { hmiTex.needsUpdate = true; return; }
+  const wob = (s, a) => Math.sin(t * s) * a + Math.sin(t * s * 2.7 + 1.3) * a * 0.4;
+  const purity = 95.2 + wob(0.7, 0.25), pressure = 5.1 + wob(0.5, 0.08), flow = 118 + wob(0.9, 2.2);
+  g.fillStyle = '#0d2a66'; g.fillRect(0, 0, w, 58);
+  g.fillStyle = '#e6f4ff'; g.font = '600 24px Sora, sans-serif'; g.textAlign = 'left'; g.textBaseline = 'middle';
+  g.fillText('OXYGEN PLANT CONTROL', 24, 30);
+  g.fillStyle = '#7fd0ff'; g.textAlign = 'right'; g.fillText('● RUNNING', w - 24, 30);
+  const cards = [['PURITY', purity.toFixed(1), '%'], ['PRESSURE', pressure.toFixed(2), 'bar'], ['FLOW', flow.toFixed(0), 'L/min']];
+  cards.forEach(([label, value, unit], i) => {
+    const x = 24 + i * 228, y = 82;
+    g.fillStyle = '#0a1a40'; g.fillRect(x, y, 216, 170);
+    g.strokeStyle = '#1f4fb5'; g.lineWidth = 2; g.strokeRect(x, y, 216, 170);
+    g.textAlign = 'left'; g.fillStyle = '#8fb4ff'; g.font = '500 20px "JetBrains Mono", monospace'; g.fillText(label, x + 16, y + 30);
+    g.fillStyle = '#ffffff'; g.font = '600 66px Sora, sans-serif'; g.fillText(value, x + 14, y + 98);
+    g.fillStyle = '#8fb4ff'; g.font = '500 22px "JetBrains Mono", monospace'; g.fillText(unit, x + 16, y + 148);
+  });
+  // purity trend
+  trace.push(0.5 + wob(0.7, 0.3)); trace.shift();
+  g.fillStyle = '#0a1a40'; g.fillRect(24, 272, w - 48, 154);
+  g.strokeStyle = '#1f4fb5'; g.strokeRect(24, 272, w - 48, 154);
+  g.fillStyle = '#8fb4ff'; g.font = '500 18px "JetBrains Mono", monospace'; g.fillText('PURITY TREND · 24 H', 40, 296);
+  g.strokeStyle = '#6fb0ff'; g.lineWidth = 3; g.beginPath();
+  trace.forEach((v, i) => { const x = 40 + (i / 59) * (w - 80), y = 410 - v * 90; i ? g.lineTo(x, y) : g.moveTo(x, y); });
+  g.stroke();
+  hmiTex.needsUpdate = true;
+}
+
+/* ---------- lights ---------- */
+scene.add(new THREE.HemisphereLight(0xdfe8ff, 0x16306e, 0.32));
+const key = new THREE.SpotLight(0xf2f6ff, 70, 16, 0.5, 0.8, 1.7);
+key.position.set(-3.2, 6.2, 4.6);
+key.target.position.set(0, 1.5, 0);
+key.castShadow = true;
+key.shadow.mapSize.set(1024, 1024);
+key.shadow.bias = -0.0006;
+key.shadow.camera.near = 2; key.shadow.camera.far = 14;
+scene.add(key, key.target);
+const rim = new THREE.DirectionalLight(0x4d8dff, 1.3);
+rim.position.set(4, 3, -3);
+scene.add(rim);
+
+/* ---------- post-processing ---------- */
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+composer.addPass(new UnrealBloomPass(new THREE.Vector2(1, 1), 0.3, 0.5, 1.25));
+composer.addPass(new OutputPass());
+
+function resize() {
+  const w = stage.clientWidth, h = stage.clientHeight;
+  renderer.setSize(w, h, false);
+  composer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+
+/* ---------- scroll: the walk in to the control cabinet ---------- */
+const clamp01 = (v) => Math.min(1, Math.max(0, v));
+const smooth = (a, b, v) => { const t = clamp01((v - a) / (b - a)); return t * t * (3 - 2 * t); };
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+const SCREEN = V(0, CAB.y + 0.1, DOOR);
+const KEYS = [
+  // p, camera position, look-at
+  [0.00, V(-3.3, 1.75, 6.4), V(-0.2, 1.7, 0)],       // the plant, from a step back
+  [0.14, V(-2.8, 1.65, 5.6), V(-0.2, 1.65, 0)],
+  [0.42, V(-1.5, 1.55, 3.6), V(0, 1.55, 0.2)],       // walking in
+  [0.66, V(-0.6, 1.42, 2.0), V(-0.12, CAB.y + 0.1, DOOR)],     // the cabinet between the towers
+  [0.84, V(-0.24, 1.43, 1.5), V(-0.13, CAB.y + 0.09, DOOR)],    // the screen, kept right of centre so the text has room
+  [1.00, V(-0.22, 1.43, 1.42), V(-0.13, CAB.y + 0.09, DOOR)],
+];
+const camPos = new THREE.Vector3(), camLook = new THREE.Vector3();
+function cameraAt(p) {
+  let i = 0;
+  while (i < KEYS.length - 2 && p > KEYS[i + 1][0]) i++;
+  const [p0, a0, l0] = KEYS[i], [p1, a1, l1] = KEYS[i + 1];
+  const t = smooth(p0, p1, p);
+  camPos.lerpVectors(a0, a1, t); camLook.lerpVectors(l0, l1, t);
+  const back = camera.aspect < 1 ? 1.7 : camera.aspect < 1.4 ? 1.22 : 1;    // narrow screens: step back
+  camPos.sub(camLook).multiplyScalar(back).add(camLook);
+}
+
+const copyA = $('#ch2-a'), copyB = $('#ch2-b'), veil = $('#ch2-veil');
+const CONTENT = 330 / 390;      // the chapter's own content ends here; the rest overlaps the gallery
+let target = 0, p = 0, visible = false, lastFrame = performance.now(), lastHMI = -1;
+function readScroll() {
+  const r = section.getBoundingClientRect();
+  const span = r.height - innerHeight;
+  target = span > 0 ? clamp01(-r.top / span) : 0;
+}
+addEventListener('scroll', readScroll, { passive: true });
+addEventListener('resize', () => { resize(); readScroll(); });
+new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(section);
+
+const clock = new THREE.Clock();
+function tick() {
+  const t = REDUCED ? 2 : clock.getElapsedTime();
+  const now = performance.now(), dt = Math.min((now - lastFrame) / 1000, 0.05);
+  lastFrame = now;
+  if (!REDUCED) { p += (target - p) * (1 - Math.exp(-dt * 6)); if (Math.abs(target - p) < 0.00005) p = target; }
+
+  // the last stretch overlaps the gallery: once white, hide this stage and stop drawing
+  const handedOver = !REDUCED && (p > CONTENT + 0.012 || section.getBoundingClientRect().bottom < innerHeight - 1);
+  stage.style.visibility = handedOver ? 'hidden' : 'visible';
+  if (handedOver) return;
+  const q = REDUCED ? 0.9 : Math.min(1, p / CONTENT);
+
+  cameraAt(q);
+  camera.position.copy(camPos);
+  if (!REDUCED) camera.position.x += Math.sin(t * 0.22) * 0.02;
+  camera.lookAt(camLook);
+
+  // refresh the screen a few times a second, like a real panel
+  const step = Math.floor(t * 4);
+  if (step !== lastHMI) { drawHMI(t, true); lastHMI = step; }
+
+  if (!REDUCED) {
+    copyA.style.opacity = smooth(0.1, 0.19, q) * (1 - smooth(0.4, 0.5, q));
+    copyB.style.opacity = smooth(0.66, 0.76, q) * (1 - smooth(0.92, 0.97, q));
+    veil.style.opacity = Math.max(1 - smooth(0.0, 0.11, q), smooth(0.93, 0.995, q));   // in from white, out to white
+  }
+  composer.render();
+}
+// this chapter overlaps the end of the previous one, so only draw once it is nearly on screen
+function frame() { requestAnimationFrame(frame); if (visible && section.getBoundingClientRect().top < innerHeight * 0.12) tick(); }
+
+// debug handle: __ch2.set(0.8) jumps straight to a point in the chapter
+window.__ch2 = { set(v) { target = p = v; tick(); } };
+resize();
+readScroll();
+p = target;
+drawHMI(0, true);
+frame();
+</script>
+
+<script id="titan-ch3-js">
+  // Gallery fly-through. Each photo sits at its own depth; scrolling moves the
+  // whole group toward you, and the pointer tilts it slightly.
+  (() => {
+    const PHOTOS = ["489506945_1132509335556970_314836139668578524_n.jpg", "489700408_1132510768890160_4475737185079279271_n.jpg", "490317181_9078699595569462_5375922108169895686_n.jpg", "481258561_1102367488571155_5381285075877700140_n.jpg", "619332341_26139542328983108_8219058674993159822_n.jpg", "481776143_1102367445237826_7359781808339654651_n.jpg", "476839911_8715908931848532_25683167773787782_n.jpg", "481666256_1102367575237813_7132076979179356955_n.jpg", "489631186_1132510952223475_5494315286149388101_n.jpg", "489499009_1132510858890151_6731242058550597616_n.jpg", "489777007_1132510518890185_1898157515467290133_n.jpg", "490145789_9078699555569466_4169987689779237529_n.jpg", "490375767_9078699708902784_1733934444012776550_n.jpg", "769056320_28292310977039555_8507636834184854316_n.jpg", "829332287_28975872612016718_6753197096946408305_n.jpg"];
+    const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const section = document.getElementById('ch3'), world = document.getElementById('g-world'), veil = document.getElementById('ch3-veil');
+    const title = section.querySelector('.g-title');
+    const GAP = 560;                                   // depth between photos, in px
+    const cards = PHOTOS.map((file, i) => {
+      const el = document.createElement('figure');
+      el.className = 'g-card';
+      const img = new Image();
+      img.decoding = 'async';       // loaded up front: lazy loading left distant frames empty
+      img.alt = 'Titan Technologies at work'; img.src = 'assets/' + file;
+      el.appendChild(img);
+      world.appendChild(el);
+      const side = i % 2 ? 1 : -1, row = (i % 3) - 1;
+      return { el, x: side * (17 + (i * 7) % 12), y: row * 17 + side * 4, z: -900 - i * GAP, tilt: -side * 16 };
+    });
+    if (REDUCED) return;
+    const END = 900 + (cards.length - 1) * GAP + 700;  // how far the group travels in total
+    const clamp01 = (v) => Math.min(1, Math.max(0, v));
+    const smooth = (a, b, v) => { const t = clamp01((v - a) / (b - a)); return t * t * (3 - 2 * t); };
+    let target = 0, p = 0, px = 0, py = 0, tx = 0, ty = 0, last = performance.now(), visible = false;
+    const read = () => { const r = section.getBoundingClientRect(), span = r.height - innerHeight; target = span > 0 ? clamp01(-r.top / span) : 0; };
+    addEventListener('scroll', read, { passive: true });
+    addEventListener('resize', read);
+    addEventListener('pointermove', (e) => { tx = (e.clientX / innerWidth) * 2 - 1; ty = (e.clientY / innerHeight) * 2 - 1; });
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(section);
+    function frame(now) {
+      requestAnimationFrame(frame);
+      if (!visible) return;
+      const dt = Math.min((now - last) / 1000, 0.05); last = now;
+      const k = 1 - Math.exp(-dt * 6);
+      p += (target - p) * k; px += (tx - px) * k; py += (ty - py) * k;
+      const travel = smooth(0.04, 1, p) * END;
+      world.style.transform = `rotateY(${px * 3}deg) rotateX(${-py * 2}deg)`;
+      const vw = innerWidth / 100, vh = innerHeight / 100;
+      for (const c of cards) {
+        const depth = c.z + travel;                    // 0 = at the screen, negative = still ahead
+        const o = clamp01((depth + 2600) / 900) * (1 - clamp01((depth - 250) / 350));
+        c.el.style.opacity = o;
+        c.el.style.visibility = o > 0.01 ? 'visible' : 'hidden';
+        if (o > 0.01) c.el.style.transform = `translate(-50%, -50%) translate3d(${c.x * vw}px, ${c.y * vh}px, ${depth}px) rotateY(${c.tilt}deg)`;
+      }
+      veil.style.opacity = 1 - smooth(0, 0.07, p);     // the gallery emerges from white
+      title.style.opacity = smooth(0.05, 0.12, p) * (1 - smooth(0.9, 0.98, p));
+    }
+    read(); p = target;
+    requestAnimationFrame(frame);
+  })();
+</script>
+
+<script id="titan-sections-js">
+  // Closing sections, animated with GSAP ScrollTrigger. Everything is written
+  // as "animate FROM hidden", so if GSAP fails to load or motion is reduced,
+  // the content is simply there.
+  addEventListener('DOMContentLoaded', () => {
+    const $ = (s) => document.querySelector(s), $$ = (s) => [...document.querySelectorAll(s)];
+
+    // pointer effects (no GSAP needed)
+    const fine = matchMedia('(prefers-reduced-motion: no-preference)').matches;
+    $$('.card').forEach((card) => card.addEventListener('pointermove', (e) => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', e.clientX - r.left + 'px');
+      card.style.setProperty('--my', e.clientY - r.top + 'px');
+    }));
+    if (!fine || !window.gsap || !window.ScrollTrigger) return;
+    gsap.registerPlugin(ScrollTrigger);
+
+    const portrait = $('#portrait');
+    portrait.addEventListener('pointermove', (e) => {
+      const r = portrait.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+      portrait.style.transform = `perspective(800px) rotateY(${x * 9}deg) rotateX(${-y * 9}deg)`;
+    });
+    portrait.addEventListener('pointerleave', () => { portrait.style.transform = ''; });
+
+    // split every section heading into words
+    $$('.sec h2').forEach((h) => { h.innerHTML = h.textContent.trim().split(/\s+/).map((w) => `<span class="w"><span>${w}</span></span>`).join(' '); });
+    const words = (id) => `${id} h2 .w > span`;
+    const rise = { yPercent: 115, duration: 1, ease: 'power4.out', stagger: 0.07 };
+
+    // 1. The person behind it: the portrait is unveiled from the bottom, then the words rise
+    gsap.timeline({ scrollTrigger: { trigger: '#person', start: 'top 60%' } })
+      .from('#portrait', { clipPath: 'inset(100% 0% 0% 0%)', duration: 1.3, ease: 'power4.inOut' })
+      .from('#portrait img', { scale: 1.4, duration: 1.8, ease: 'power3.out' }, 0)
+      .from(words('#person'), rise, 0.3)
+      .from('#person p', { y: 34, opacity: 0, duration: 1, ease: 'power3.out' }, 0.7);
+
+    // 2. What we do: the cards tip up into place one after another; photos drift inside them
+    gsap.from(words('#services'), { ...rise, scrollTrigger: { trigger: '#services', start: 'top 62%' } });
+    gsap.from('.card', {
+      y: 110, opacity: 0, rotateX: -18, transformPerspective: 900, transformOrigin: '50% 100%',
+      duration: 1.1, ease: 'power3.out', stagger: 0.13, scrollTrigger: { trigger: '.cards', start: 'top 80%' },
+    });
+    $$('.card').forEach((card) => {
+      const img = card.querySelector('img');
+      gsap.set(img, { scale: 1.22 });
+      gsap.fromTo(img, { yPercent: -8 }, { yPercent: 8, ease: 'none', scrollTrigger: { trigger: card, start: 'top bottom', end: 'bottom top', scrub: true } });
+      card.addEventListener('pointerenter', () => gsap.to(card, { y: -10, duration: 0.4, ease: 'power3.out', overwrite: 'auto' }));
+      card.addEventListener('pointerleave', () => gsap.to(card, { y: 0, duration: 0.5, ease: 'power3.out', overwrite: 'auto' }));
+    });
+
+    // 3. Still tinkering: text slides in from the left, the two photos are unveiled and drift apart
+    gsap.timeline({ scrollTrigger: { trigger: '#tinkering', start: 'top 60%' } })
+      .from(words('#tinkering'), rise)
+      .from('#tinkering p', { x: -50, opacity: 0, duration: 1, ease: 'power3.out' }, 0.35)
+      .from('.shot', { clipPath: 'inset(0% 0% 100% 0%)', y: 70, duration: 1.2, ease: 'power4.inOut', stagger: 0.16 }, 0.1)
+      .from('.shot img', { scale: 1.35, duration: 1.7, ease: 'power3.out', stagger: 0.16 }, 0.1);
+    $$('.shot').forEach((shot, i) => gsap.fromTo(shot, { yPercent: i ? -9 : 9 }, { yPercent: i ? 9 : -9, ease: 'none', immediateRender: false, scrollTrigger: { trigger: '#tinkering', start: 'top bottom', end: 'bottom top', scrub: true } }));
+
+    // 4. Contact: the question lights up word by word as you scroll, then the three ways in
+    gsap.from(words('#contact'), { opacity: 0.1, yPercent: 45, ease: 'none', stagger: 0.09, scrollTrigger: { trigger: '#contact', start: 'top 78%', end: 'top 12%', scrub: 0.6 } });
+    gsap.from('.way', { y: 46, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.12, scrollTrigger: { trigger: '.ways', start: 'top 90%' } });
+    gsap.from('footer', { opacity: 0, duration: 1.2, scrollTrigger: { trigger: 'footer', start: 'top 98%' } });
+
+    // transitions: each section eases back and dims as the next one takes over
+    $$('.sec').forEach((sec) => {
+      if (sec.id === 'contact') return;
+      gsap.to(sec.querySelector('.sec-in'), { opacity: 0, scale: 0.94, y: -60, ease: 'none', scrollTrigger: { trigger: sec, start: 'bottom 62%', end: 'bottom 8%', scrub: true } });
+    });
+
+    addEventListener('load', () => ScrollTrigger.refresh());
+  });
+</script>
+
+<script type="module" id="titan-closing-fx-js">
+import * as THREE from 'three';
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
+
+const $ = (s) => document.querySelector(s);
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const wrap = $('#closing'), fx = $('#closing-fx');
+const DPR = Math.min(devicePixelRatio, 1.5);
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const smooth = (a, b, v) => { const t = clamp((v - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+let W = 1, H = 1, visible = false;
+new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(wrap);
+
+/* ---------- 1s and 0s ----------
+   A grid of digits. Each column streams up or down at its own slow speed, soft
+   waves of brightness wander across the field, and the whole thing breathes. */
+const bits = $('#bits'), g = bits.getContext('2d');
+const CELL_W = 20, CELL_H = 24;
+const hash = (x, y) => { const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return s - Math.floor(s); };
+// The digits are painted once onto a hidden sheet. Every frame, each column of
+// that sheet is slid a fraction of a pixel, then a soft brightness map is laid
+// over the lot. Nothing is redrawn digit by digit, so nothing jumps.
+const sheet = document.createElement('canvas'), sg = sheet.getContext('2d');
+const glow = document.createElement('canvas'), gg = glow.getContext('2d');
+glow.width = 40; glow.height = 24;
+const glowPx = gg.createImageData(glow.width, glow.height);
+let cols = 0, sheetH = 0, colSpeed = [];
+function paintSheet() {
+  cols = Math.ceil(W / CELL_W);
+  sheetH = (Math.ceil(H / CELL_H) + 1) * CELL_H;
+  sheet.width = cols * CELL_W * DPR; sheet.height = sheetH * DPR;
+  sg.setTransform(DPR, 0, 0, DPR, 0, 0);
+  sg.font = '500 14px "JetBrains Mono", ui-monospace, monospace';
+  sg.textAlign = 'center'; sg.textBaseline = 'middle'; sg.fillStyle = '#5d9bff';
+  for (let c = 0; c < cols; c++) for (let r = 0; r < sheetH / CELL_H; r++) sg.fillText(hash(c, r) > 0.5 ? '1' : '0', (c + 0.5) * CELL_W, (r + 0.5) * CELL_H);
+  colSpeed = Array.from({ length: cols }, (_, c) => ((hash(c, 7) - 0.5) * 9 + (hash(c, 3) > 0.5 ? 2.5 : -2.5)));   // px per second: a slow drift
+}
+function drawBits(t) {
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  g.globalCompositeOperation = 'source-over';
+  g.clearRect(0, 0, bits.width, bits.height);
+  const cw = CELL_W * DPR, sh = sheet.height;
+  for (let c = 0; c < cols; c++) {
+    let y = ((t * colSpeed[c] * DPR) % sh + sh) % sh;            // how far this column has slid, wrapped
+    g.drawImage(sheet, c * cw, 0, cw, sh, c * cw, y - sh, cw, sh);
+    g.drawImage(sheet, c * cw, 0, cw, sh, c * cw, y, cw, sh);
+  }
+  // brightness map: slow wandering waves times one long breath
+  const breath = 0.5 + 0.5 * Math.sin(t * 0.55);
+  const d = glowPx.data, gw = glow.width, gh = glow.height;
+  for (let y = 0; y < gh; y++) for (let x = 0; x < gw; x++) {
+    const wave = Math.sin(x * 0.42 + t * 0.21) + Math.sin(y * 0.55 - t * 0.17) + Math.sin((x + y) * 0.3 + t * 0.13);
+    const lit = clamp((wave + 0.9) / 3.9, 0, 1);
+    d[(y * gw + x) * 4 + 3] = 255 * (0.05 + 0.3 * lit * lit) * (0.4 + 0.6 * breath);
+  }
+  gg.putImageData(glowPx, 0, 0);
+  g.globalCompositeOperation = 'destination-in';
+  g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
+  g.drawImage(glow, 0, 0, bits.width, bits.height);
+}
+
+/* ---------- the small spinning logo ---------- */
+const renderer = new THREE.WebGLRenderer({ canvas: $('#mini-t'), alpha: true, antialias: true });
+renderer.setPixelRatio(DPR);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(30, 1, 10, 6000);
+const tl = new THREE.TextureLoader();
+const tex = (f, srgb) => { const t = tl.load('assets/3d/' + f); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(0.55, 0.55); if (srgb) t.colorSpace = THREE.SRGBColorSpace; return t; };
+new RGBELoader().load('assets/3d/studio.hdr', (hdr) => {
+  const pm = new THREE.PMREMGenerator(renderer);
+  scene.environment = pm.fromEquirectangular(hdr).texture;
+  hdr.dispose(); pm.dispose();
+});
+const steel = new THREE.MeshStandardMaterial({
+  color: 0xd3dbe8, map: tex('metal_color.jpg', true), normalMap: tex('metal_normal.jpg'), roughnessMap: tex('metal_rough.jpg'),
+  metalness: 0.92, roughness: 0.9, envMapIntensity: 1.1,
+});
+const edge = new THREE.LineBasicMaterial({ color: 0x6aa5ff });
+// the same three blocks as the opening logo, traced from logo.jpg
+const BLOCKS = [
+  [[-1.355, 1.635], [1.355, 1.635], [1.355, 1.065], [0.285, 0.815], [0.285, 0.945], [-1.355, 1.215]],
+  [[-1.355, 0.79], [-0.195, 0.615], [-0.195, -1.635], [-1.355, -1.635]],
+  [[0.285, 0.435], [1.355, 0.659], [1.355, -1.635], [0.285, -1.635]],
+];
+const mark = new THREE.Group();
+const DEPTH = 0.7, BEV = 0.035;
+for (const pts of BLOCKS) {
+  const geo = new THREE.ExtrudeGeometry(new THREE.Shape(pts.map(([x, y]) => new THREE.Vector2(x, y))), {
+    depth: DEPTH - BEV * 2, bevelEnabled: true, bevelThickness: BEV, bevelSize: BEV, bevelOffset: -BEV, bevelSegments: 4,
+  });
+  const m = new THREE.Mesh(geo, steel);
+  m.position.z = -DEPTH / 2 + BEV;
+  mark.add(m);
+  for (const z of [DEPTH / 2 + 0.003, -DEPTH / 2 - 0.003]) {
+    mark.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([...pts, pts[0]].map(([x, y]) => new THREE.Vector3(x, y, z))), edge));
+  }
+}
+scene.add(mark);
+scene.add(new THREE.AmbientLight(0x6f8fd0, 0.5));
+const key = new THREE.DirectionalLight(0xdfe9ff, 2.2);
+key.position.set(300, 400, 900);
+scene.add(key);
+
+/* ---------- where the logo sits in each section ----------
+   Sizes are taken from the heading beside it, so it always matches the text. */
+const SECS = ['person', 'services', 'tinkering', 'contact'].map((id) => {
+  const sec = document.getElementById(id);
+  return { sec, inner: sec.querySelector('.sec-in'), h2: sec.querySelector('h2') };
+});
+const range = document.createRange();
+function textBox(el) { range.selectNodeContents(el); return range.getBoundingClientRect(); }
+function anchor(i) {
+  const { sec, inner, h2 } = SECS[i];
+  const s = sec.getBoundingClientRect(), box = inner.getBoundingClientRect(), t = textBox(h2);
+  const line = parseFloat(getComputedStyle(h2).lineHeight) || t.height;
+  if (W < 760) {                                             // phones: small, in the top corner of each section
+    const size = 58;
+    return { x: W - 20 - size / 2, y: clamp(s.top + 96, 96, H + 200), size };
+  }
+  if (i === 0) { const size = clamp(t.height * 2.6, 120, 250); return { x: box.right - size / 2, y: s.top + s.height / 2, size }; }      // right side
+  if (i === 1) { const size = line * 1.25; return { x: t.right + 34 + size / 2, y: t.top + t.height / 2, size }; }                       // beside the heading
+  if (i === 2) { const size = line * 1.25; return { x: t.left + size * 0.42, y: t.top - 18 - size / 2, size }; }                         // above the heading
+  const size = clamp(t.height * 0.95, 90, 240);                                                                                          // right of the question
+  return { x: Math.min(t.right + 48 + size / 2, box.right - size / 2), y: t.top + t.height / 2, size };
+}
+const cur = { x: 0, y: 0, size: 0, set: false };
+function logoTarget() {
+  const mid = H / 2, centres = SECS.map(({ sec }) => { const r = sec.getBoundingClientRect(); return r.top + r.height / 2; });
+  let i = 0;
+  while (i < SECS.length - 2 && mid > centres[i + 1]) i++;
+  const f = smooth(0.3, 0.7, (mid - centres[i]) / (centres[i + 1] - centres[i]));      // rest at each spot, glide in between
+  const a = anchor(i), b = anchor(i + 1);
+  return { x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f, size: a.size + (b.size - a.size) * f };
+}
+
+function resize() {
+  W = fx.clientWidth; H = fx.clientHeight;
+  bits.width = W * DPR; bits.height = H * DPR;
+  paintSheet();
+  renderer.setSize(W, H, false);
+  camera.aspect = W / H;
+  camera.position.z = H / 2 / Math.tan(THREE.MathUtils.degToRad(15));      // 1 unit = 1 px at the logo's depth
+  camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize);
+
+let last = performance.now();
+function frame(now) {
+  requestAnimationFrame(frame);
+  if (!visible) return;
+  const t = now / 1000, dt = Math.min((now - last) / 1000, 0.05); last = now;
+  drawBits(REDUCED ? 4 : t);
+
+  const goal = logoTarget(), k = cur.set ? 1 - Math.exp(-dt * 7) : 1;
+  cur.x += (goal.x - cur.x) * k; cur.y += (goal.y - cur.y) * k; cur.size += (goal.size - cur.size) * k; cur.set = true;
+  mark.position.set(cur.x - W / 2, H / 2 - cur.y, 0);
+  mark.scale.setScalar(cur.size / 3.27);
+  mark.rotation.y = REDUCED ? -0.5 : t * 0.7;
+  mark.rotation.x = REDUCED ? 0.1 : Math.sin(t * 0.5) * 0.12;
+  // fade in as the first closing section arrives
+  $('#mini-t').style.opacity = smooth(H * 0.95, H * 0.45, SECS[0].sec.getBoundingClientRect().top);
+  renderer.render(scene, camera);
+}
+resize();
+requestAnimationFrame(frame);
+</script>
+
+<script id="titan-scroll-marker-js">
+  // hide the scroll marker once the end of the page is in reach
+  (() => {
+    const m = document.getElementById('scroll-marker');
+    const check = () => m.classList.toggle('done', scrollY + innerHeight > document.documentElement.scrollHeight - innerHeight * 0.6);
+    addEventListener('scroll', check, { passive: true });
+    addEventListener('resize', check);
+    check();
+  })();
+</script>
+</body>
+</html>
